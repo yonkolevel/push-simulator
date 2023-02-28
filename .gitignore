@@ -30,7 +30,9 @@ go.work
 logs
 **/*.backup.*
 **/*.back.*
-frontend/dist
+
+dist
+
 node_modules
 bower_components
 
