@@ -1,55 +1,58 @@
 // @ts-nocheck
-import { clone, range } from 'lodash';
-import { Note, PadColor } from './types';
+import { clone, range } from "lodash";
+import { Note, PadColor } from "./types";
 
 const rootNoteColor = 126; // green
 const inScaleColor = 127; // red
 const defaultColor = 123; // dark gray
 const pressedColor = 122;
-const colorWhite = 127
+const colorWhite = 127;
 
-const pushColorToHexMap:{[key: number]: string} = {
+const pushColorToHexMap: { [key: number]: string } = {
   126: "pink",
   127: "white",
   123: "gray"
-}
+};
 
 export const PUSH_DEVICE_ID = [0, 33, 29];
 
 export const notes = [
-  'C',
-  'C#',
-  'D',
-  'D#',
-  'E',
-  'F',
-  'F#',
-  'G',
-  'G#',
-  'A',
-  'A#',
-  'B'
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B"
 ];
 
 export enum Mode {
+  Idle,
   ChordMajor,
   ChordMinor,
   Default,
-  DefaultOn,
+  On,
+  Off,
   Scale,
-  Chromatic
+  Chromatic,
+  MultiTap
 }
 
-export const majorScale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-export const majorScaleChords = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii'];
+export const majorScale = ["C", "D", "E", "F", "G", "A", "B"];
+export const majorScaleChords = ["I", "ii", "iii", "IV", "V", "vi", "vii"];
 export const startOctave = 3;
 export const numRows = 8;
 export const numCols = 8;
 export const padStartVal = 36;
 export const rowInterval = 5; // The start position for each row for the scale
 
-export const inScale = note => majorScale.indexOf(note) > -1;
-export const isRootNote = note => note === notes[0];
+export const inScale = (note) => majorScale.indexOf(note) > -1;
+export const isRootNote = (note) => note === notes[0];
 export const padKey = ({ note, octave }) => `${note}-${octave}`;
 export const toMidiNote = ({ note, octave }) => `${note}${octave}`;
 
@@ -72,8 +75,8 @@ export const getNoteOctave = (row: number, col: number): Note => {
 
 const createNotePads = () => {
   const notePads = new Map();
-  range(0, 8).forEach(row => {
-    range(0, 8).forEach(col => {
+  range(0, 8).forEach((row) => {
+    range(0, 8).forEach((col) => {
       const { note, octave } = getNoteOctave(row, col);
       const key = `${note}-${octave}`;
 
@@ -132,12 +135,12 @@ export const sortNotesToScale = (
 };
 
 // This is really basic. Only calucaltes major and minor chords
-export const determineChord = chordNotes => {
+export const determineChord = (chordNotes) => {
   if (chordNotes.length !== 3) {
     return null;
   }
   const [root, third, fifth] = chordNotes;
-  let type = 'major';
+  let type = "major";
 
   // Create the scale with the root note of the chord as 0
   // This way we can determine the distance for the other notes to calculate the relations
@@ -148,7 +151,7 @@ export const determineChord = chordNotes => {
   if (
     Math.abs(typeNotes.indexOf(root.note) - typeNotes.indexOf(third.note)) === 3
   ) {
-    type = 'minor';
+    type = "minor";
   } else if (
     Math.abs(typeNotes.indexOf(root.note) - typeNotes.indexOf(third.note)) !== 4
   ) {
@@ -171,13 +174,12 @@ export const determineChord = chordNotes => {
   };
 };
 
-
-
 // only supports isomorphic - needs to handle in-key as well or write a separate func
 export const getPadColor = (row: number, col: number, mode: Mode): string => {
-  if (mode === Mode.DefaultOn) {
-    return "white"
+  if (mode === Mode.Idle || mode === Mode.MultiTap) {
+    return "white";
   }
+
   let padColor = defaultColor;
   const padVal = col + padStartVal + row * numCols;
 
@@ -191,7 +193,8 @@ export const getPadColor = (row: number, col: number, mode: Mode): string => {
     padColor = rootNoteColor;
   }
 
-  return pushColorToHexMap[padColor]
+  return pushColorToHexMap[padColor];
 };
 
-export const getPadValue = (row: number, col: number) =>   col + padStartVal + row * numCols;
+export const getPadValue = (row: number, col: number) =>
+  col + padStartVal + row * numCols;

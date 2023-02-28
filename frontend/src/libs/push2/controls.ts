@@ -18,8 +18,8 @@ export const createControlsArray = (
 };
 
 export enum ControlType {
-  CC = 'cc',
-  NOTE = 'note'
+  CC = "cc",
+  NOTE = "note"
 }
 
 export interface Control {
@@ -28,7 +28,8 @@ export interface Control {
   /**
    * Number of the note or control
    */
-  id: number;
+  id: ControlId;
+  velocity?: number;
 }
 
 export enum ControlId {

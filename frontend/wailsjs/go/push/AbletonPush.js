@@ -10,8 +10,12 @@ export function GetNotePads() {
   return window['go']['push']['AbletonPush']['GetNotePads']();
 }
 
-export function PadPressed(arg1) {
-  return window['go']['push']['AbletonPush']['PadPressed'](arg1);
+export function PadDown(arg1) {
+  return window['go']['push']['AbletonPush']['PadDown'](arg1);
+}
+
+export function PadUp(arg1) {
+  return window['go']['push']['AbletonPush']['PadUp'](arg1);
 }
 
 export function RTStart() {

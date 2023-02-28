@@ -2,7 +2,6 @@ package push
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"gitlab.com/gomidi/midi/writer"
@@ -44,7 +43,7 @@ type AbletonPush struct {
 	NotePads       NotePads
 	ScaleMode      ScaleMode
 	Mode           DeviceMode
-	ActivePads     []Note
+	ActivePads     map[string]Note
 	ctx            context.Context
 }
 
@@ -92,12 +91,10 @@ func (ap *AbletonPush) Startup(ctx context.Context) {
 			log.Println(name)
 		}),
 		reader.NoteOn(func(p *reader.Position, channel, key, velocity uint8) {
-			runtime.LogPrint(ctx, "note on")
-			runtime.LogDebugf(ctx, "note_on %d", key)
+			runtime.LogDebugf(ctx, "note_on %d %d", key, velocity)
 			runtime.EventsEmit(ap.ctx, "note_on", key)
 		}),
 		reader.NoteOff(func(p *reader.Position, channel, key, velocity uint8) {
-			runtime.LogPrint(ctx, "note off")
 			runtime.LogDebugf(ctx, "note_off %d", key)
 			runtime.EventsEmit(ap.ctx, "note_off", key)
 		}),
@@ -238,19 +235,22 @@ func getDecodedHexString(src []byte) string {
 	return o
 }
 
-func (ap *AbletonPush) PadPressed(note Note) {
+func (ap *AbletonPush) PadDown(note Note) {
 	key := padKey(note.note, note.octave)
 
-	ap.ActivePads = append(ap.ActivePads, note)
-	ap.ActivePads = sortNotesToScale(ap.ActivePads)
-
-	chord := determineChord(ap.ActivePads)
-
-	if chord != nil {
-		fmt.Printf("PLAYING CHORD PRESS - %v", chord)
-	}
+	ap.ActivePads[key] = note
 
 	if _, ok := ap.NotePads[key]; !ok {
+		return
+	}
+}
+
+func (ap *AbletonPush) PadUp(note Note) {
+	key := padKey(note.note, note.octave)
+
+	delete(ap.ActivePads, key)
+
+	if _, ok := ap.NotePads[key]; ok {
 		return
 	}
 }

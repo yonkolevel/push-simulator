@@ -7,7 +7,9 @@ export function CloseSession():Promise<void>;
 
 export function GetNotePads():Promise<push.NotePads>;
 
-export function PadPressed(arg1:push.Note):Promise<void>;
+export function PadDown(arg1:push.Note):Promise<void>;
+
+export function PadUp(arg1:push.Note):Promise<void>;
 
 export function RTStart():Promise<void>;
 

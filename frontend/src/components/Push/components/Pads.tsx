@@ -1,13 +1,17 @@
 import { range } from "lodash";
-import  React, { useState} from "react";
+import React, { useState } from "react";
 import {
-  SendNoteOff,
-  SendNoteOn
-} from "../../../../wailsjs/go/push/AbletonPush";
-import { ControlId } from "../../../libs/push2/controls";
-import { getPadColor, getPadValue, Mode } from "../../../libs/push2/core";
-import { useDeviceNoteState } from "../../../libs/push2/react/hooks";
-import { EventsOn } from "../../../../wailsjs/runtime/runtime";
+  padDown,
+  padUp,
+  useAppDispatch,
+  useAppState
+} from "../../../libs/push2/context/PushContext";
+import { getPadColor, Mode } from "../../../libs/push2/core";
+import {
+  NoteState,
+  PadColor,
+  velocityToHexColor
+} from "../../../libs/push2/types";
 
 const Pad: React.FunctionComponent<{
   isOn?: boolean;
@@ -29,12 +33,12 @@ const Pad: React.FunctionComponent<{
         width={width}
         height={height}
         fillOpacity={1}
-        fill={isOn ? "rgba(0, 255, 0, 1)" : color}
+        fill={isOn ? velocityToHexColor(PadColor.PRESSED) : color}
         y={y}
         x={x}
         onMouseDown={onMouseDown}
       >
-        <text style={{color: "red"}}>{id}</text>
+        <text style={{ color: "red" }}>{id}</text>
       </rect>
     );
   }
@@ -44,43 +48,18 @@ interface PadsProps {
   onMouseDown: (id: string) => void;
 }
 
-
 enum Key {
   Option = 18
 }
 
 const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
-  const [mode, setMode] = useState(Mode.DefaultOn);
-  const {notesState, updateNotesState} = useDeviceNoteState()
-
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.keyCode === Key.Option) {
-        setMode(Mode.ChordMajor);
-      }
-    };
-
-    const handleKeyUp = () => {
-      setMode(Mode.Default);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
-
-
-
+  const { notesPressed: controlsPressed, tapMode } = useAppState();
+  const dispatch = useAppDispatch();
 
   const pads: any[] = [];
   const width = 29.23;
   const height = 20.58;
-  let pad = 11;
+  let pad = 36;
 
   range(0, 8).forEach((row) => {
     range(0, 8).forEach((col) => {
@@ -89,51 +68,31 @@ const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
       pads.push({
         id: `pad_${pad}`,
         key: `pad_${pad}`,
-        isOn: notesState.get(pad)?.isOn,
+        isOn: controlsPressed.has(pad),
         y: y,
         x: x,
         note: pad,
-        color: getPadColor(row, col, mode)
+        color: getPadColor(row, col, tapMode)
       });
       pad = pad + 1;
     });
   });
 
-  // console.log("pad value is:", getPadValue(0, 7));
-  // console.log("color is: ", getPadColor(0, 7));
+  const handleMouseDown = (note: NoteState) => {};
+
+  const handleMouseUp = () => {};
+
+  const handleMouseLeave = () => {};
+
   return (
     <>
       {pads.map((p) => (
         <Pad
-          onMouseLeave={() => {
-            if (notesState.get(p.note)?.isOn) {
-              // should be converted to a reset chord func
-              updateNotesState(p.note, { isOn: false });
-              updateNotesState(p.note + 2, { isOn: false });
-              updateNotesState(p.note + 9, { isOn: false });
-            }
-          }}
           onMouseDown={() => {
-            if (mode === Mode.ChordMajor) {
-              updateNotesState(p.note, { isOn: true });
-              updateNotesState(p.note + 2, { isOn: true });
-              updateNotesState(p.note + 9, { isOn: true });
-            } else {
-              updateNotesState(p.note, { isOn: true });
-            }
-
-            SendNoteOn(p.note, 127);
-            console.log(p.note)
+            padDown(dispatch, p.note);
           }}
           onMouseUp={() => {
-            if (mode === Mode.ChordMajor) {
-              updateNotesState(p.note, { isOn: false });
-              updateNotesState(p.note + 2, { isOn: false });
-              updateNotesState(p.note + 9, { isOn: false });
-            } else {
-              updateNotesState(p.note, { isOn: false });
-            }
-            SendNoteOff(p.note);
+            padUp(dispatch, p.note);
           }}
           key={p.key}
           {...p}

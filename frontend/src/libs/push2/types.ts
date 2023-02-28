@@ -32,22 +32,22 @@ export enum PadColor {
   ROOT_NOTE = Color.PURPLE,
   IN_SCALE = Color.WHITE,
   DEFAULT = 0,
-  PRESSED = Color.GREEN
+  PRESSED = Color.GREENBLUE
 }
 
 export enum Notes {
-  'C',
-  'C#',
-  'D',
-  'D#',
-  'E',
-  'F',
-  'F#',
-  'G',
-  'G#',
-  'A',
-  'A#',
-  'B'
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B"
 }
 
 export type Note = {
@@ -55,7 +55,24 @@ export type Note = {
   octave: number;
 };
 
-
 export interface NoteState {
   isOn: boolean;
 }
+
+// a function that maps veloity to a PadColor
+export const velocityToHexColor = (velocity: number): string => {
+  switch (velocity) {
+    case Color.WHITE:
+      return "#fff";
+    case Color.GREENBLUE:
+      return "#DAF7A6";
+    case Color.DARKGRAY:
+      return "#a9a9a9";
+    case Color.LIGHTGRAY:
+      return "#a9a9a9";
+    default:
+      break;
+  }
+
+  return "#fff";
+};
