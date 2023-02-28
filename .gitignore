@@ -30,7 +30,7 @@ go.work
 logs
 **/*.backup.*
 **/*.back.*
-
+frontend/dist
 node_modules
 bower_components
 
@@ -40,4 +40,4 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/go,react
+
