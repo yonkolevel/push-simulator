@@ -2,10 +2,11 @@
 
 ## About
 
-This is the official Wails React-TS template.
+This is the repository for an implementation of the Ableton Push 2 Simulator.
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+It uses `wails` as the application framework. Wails itself is a tool written mostly in go that helps building applications with go and web technologies.
+
+The `frontend` folder contains a project in react. At the root you should find the go related packages and the `main.go` entry point.
 
 ## Live Development
 
