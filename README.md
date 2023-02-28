@@ -4,7 +4,7 @@
 
 This is the repository for an implementation of the Ableton Push 2 Simulator.
 
-It uses `wails` as the application framework. Wails itself is a tool written mostly in go that helps building applications with go and web technologies.
+It uses [`wails`](https://wails.io/docs/gettingstarted/installation) as the application framework. Wails itself is a tool written mostly in go that helps building applications with go and web technologies.
 
 The `frontend` folder contains a project in react. At the root you should find the go related packages and the `main.go` entry point.
 
