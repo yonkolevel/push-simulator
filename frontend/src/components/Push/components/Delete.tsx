@@ -7,31 +7,15 @@ import {
   useAppState
 } from "../../../libs/push2/context/PushContext";
 import { ControlId, controls } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgDelete = (props: React.SVGProps<SVGSVGElement>) => {
-  const [mouseDown, setMouseDown] = React.useState(false);
   const { notesPressed } = useAppState();
-  const dispatch = useAppDispatch();
   const isOn = notesPressed.has(ControlId.DELETE);
 
   return (
-    <g
-      id="delete"
-      onMouseDown={() => {
-        setMouseDown(true);
-        padDown(dispatch, ControlId.DELETE);
-      }}
-      onMouseUp={() => {
-        setMouseDown(false);
-        padUp(dispatch, ControlId.DELETE);
-      }}
-    >
-      <path
-        id="Vector_175"
-        d="M28.27 58.33H8.08v20.19h20.19V58.33z"
-        fill={"#3C3C3B"}
-        style={{ opacity: mouseDown ? 0.8 : 1 }}
-      />
+    <Control name="Delete" controlId={ControlId.DELETE}>
+      <path id="Vector_175" d="M28.27 58.33H8.08v20.19h20.19V58.33z" />
       <path
         id="Vector_176"
         d="M10.31 63.66v-2.77h.58a2.27 2.27 0 01.66.08c.174.06.334.155.47.28a1.43 1.43 0 010 2.06 1.25 1.25 0 01-.47.27 2.15 2.15 0 01-.65.08h-.59zm.42-.39h.18a1.53 1.53 0 00.47-.06.9.9 0 00.34-.2 1 1 0 000-1.47 1.14 1.14 0 00-.81-.26h-.18v1.99z"
@@ -62,7 +46,7 @@ const SvgDelete = (props: React.SVGProps<SVGSVGElement>) => {
         d="M20.54 62.88h-1.25a.51.51 0 00.14.34.47.47 0 00.57.06 1.13 1.13 0 00.22-.27l.34.19a1.058 1.058 0 01-.17.23.7.7 0 01-.19.16.781.781 0 01-.21.09c-.086.01-.174.01-.26 0a.79.79 0 01-.62-.25.93.93 0 01-.24-.67 1 1 0 01.23-.67.79.79 0 01.61-.26.799.799 0 01.61.25 1 1 0 01.22.68v.12zm-.41-.33a.39.39 0 00-.41-.32h-.14a.41.41 0 00-.11.07.32.32 0 00-.1.1.497.497 0 00-.05.13l.81.02z"
         fill={isOn ? Colors.Green : "#fff"}
       />
-    </g>
+    </Control>
   );
 };
 
