@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from "react";
-import { ControlId } from "../controls";
+import { ControlId, ControlType } from "../controls";
 import {
   SendCCOn,
   SendCCOff,
@@ -13,7 +13,10 @@ enum ActionType {
   PAD_DOWN,
   PAD_UP,
   CHANGE_TAP_MODE,
-  RESET_TAP_MODE
+  RESET_TAP_MODE,
+  NOTE_ON,
+  NOTE_OFF,
+  CONTROL_CHANGE
 }
 
 interface Action {
@@ -21,9 +24,15 @@ interface Action {
   payload?: any;
 }
 
+type ControlState = {
+  id: ControlId;
+  velocity: number;
+};
+
 type AppState = {
   notesPressed: Set<ControlId>;
   controlsPressed: Set<ControlId>;
+  controlsState: Map<ControlId, ControlState>;
   tapMode: Mode;
 };
 
@@ -36,17 +45,22 @@ const AppDispatchContext = React.createContext<Dispatch | undefined>(undefined);
 const initialState: AppState = {
   notesPressed: new Set(),
   controlsPressed: new Set(),
+  controlsState: new Map(),
   tapMode: Mode.Idle
 };
 
 const reducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
     case ActionType.PAD_DOWN: {
-      const pad = action.payload.id;
-      console.log(pad);
+      const { id, type } = action.payload;
+      if (type == ControlType.CC) {
+        state.controlsPressed.add(id);
+      } else {
+        state.notesPressed.add(id);
+      }
+
       return {
-        ...state,
-        notesPressed: state.notesPressed.add(pad)
+        ...state
       };
     }
 
@@ -55,8 +69,12 @@ const reducer = (state: AppState, action: Action): AppState => {
         return state;
       }
 
-      const pad = action.payload.id;
-      state.notesPressed.delete(pad);
+      const { id, type } = action.payload;
+      if (type == ControlType.CC) {
+        state.controlsPressed.delete(id);
+      } else {
+        state.notesPressed.delete(id);
+      }
       return {
         ...state
       };
@@ -75,7 +93,32 @@ const reducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         tapMode: Mode.Idle,
-        notesPressed: new Set()
+        notesPressed: new Set(),
+        controlsPressed: new Set()
+      };
+    }
+
+    case ActionType.NOTE_ON: {
+      const { id, velocity } = action.payload;
+      state.controlsState.set(id, { id, velocity });
+      return {
+        ...state
+      };
+    }
+
+    case ActionType.NOTE_OFF: {
+      const { id } = action.payload;
+      state.controlsState.set(id, { id, velocity: 0 });
+      return {
+        ...state
+      };
+    }
+
+    case ActionType.CONTROL_CHANGE: {
+      const { id, velocity } = action.payload;
+      state.controlsState.set(id, { id, velocity });
+      return {
+        ...state
       };
     }
 
@@ -88,17 +131,31 @@ export function AppProvider({ children }: AppProviderPros) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   React.useEffect(() => {
-    EventsOn("note_on", (note: number) => {
-      padDown(dispatch, note);
+    EventsOn("note_on", (note: number, velocity) => {
+      dispatch({
+        type: ActionType.NOTE_ON,
+        payload: { id: note, velocity: velocity }
+      });
     });
 
     EventsOn("note_off", (note: number) => {
-      padUp(dispatch, note);
+      dispatch({
+        type: ActionType.NOTE_OFF,
+        payload: { id: note }
+      });
+    });
+
+    EventsOn("cc", (controller: number, velocity: number) => {
+      dispatch({
+        type: ActionType.CONTROL_CHANGE,
+        payload: { id: controller, velocity }
+      });
     });
 
     return () => {
       EventsOff("note_on");
       EventsOff("note_off");
+      EventsOff("cc");
     };
   });
 
@@ -110,6 +167,7 @@ export function AppProvider({ children }: AppProviderPros) {
 
       if (e.shiftKey) {
         changeTapMode(dispatch, Mode.MultiTap);
+        console.log("MultiTap mode");
       }
     };
 
@@ -152,7 +210,10 @@ export function padUp(dispatch: Dispatch, id: ControlId) {
  * @param id
  */
 export function ccDown(dispatch: Dispatch, id: ControlId) {
-  dispatch({ type: ActionType.PAD_DOWN, payload: { id } });
+  dispatch({
+    type: ActionType.PAD_DOWN,
+    payload: { id, type: ControlType.CC }
+  });
   SendCCOn(id);
 }
 
@@ -162,7 +223,7 @@ export function ccDown(dispatch: Dispatch, id: ControlId) {
  * @param id
  */
 export function ccUp(dispatch: Dispatch, id: ControlId) {
-  dispatch({ type: ActionType.PAD_UP, payload: { id } });
+  dispatch({ type: ActionType.PAD_UP, payload: { id, type: ControlType.CC } });
   SendCCOff(id);
 }
 

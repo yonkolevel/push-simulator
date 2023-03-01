@@ -92,11 +92,15 @@ func (ap *AbletonPush) Startup(ctx context.Context) {
 		}),
 		reader.NoteOn(func(p *reader.Position, channel, key, velocity uint8) {
 			runtime.LogDebugf(ctx, "note_on %d %d", key, velocity)
-			runtime.EventsEmit(ap.ctx, "note_on", key)
+			runtime.EventsEmit(ap.ctx, "note_on", key, velocity)
 		}),
 		reader.NoteOff(func(p *reader.Position, channel, key, velocity uint8) {
 			runtime.LogDebugf(ctx, "note_off %d", key)
-			runtime.EventsEmit(ap.ctx, "note_off", key)
+			runtime.EventsEmit(ap.ctx, "note_off", key, velocity)
+		}),
+		reader.ControlChange(func(p *reader.Position, channel, controller, velocity uint8) {
+			runtime.LogDebugf(ctx, "cc %d %d", controller, velocity)
+			runtime.EventsEmit(ap.ctx, "cc", controller, velocity)
 		}),
 		reader.RTStart(func() {
 			log.Println("Start msg")

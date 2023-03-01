@@ -1,17 +1,13 @@
 import { range } from "lodash";
-import React, { useState } from "react";
+import React from "react";
+import { Colors, pushColorToHexMap } from "../../../libs/push2/colors";
 import {
-  padDown,
-  padUp,
   useAppDispatch,
   useAppState
 } from "../../../libs/push2/context/PushContext";
-import { getPadColor, Mode } from "../../../libs/push2/core";
-import {
-  NoteState,
-  PadColor,
-  velocityToHexColor
-} from "../../../libs/push2/types";
+import { ControlType } from "../../../libs/push2/controls";
+import { Mode } from "../../../libs/push2/core";
+import Control from "../Control";
 
 const Pad: React.FunctionComponent<{
   isOn?: boolean;
@@ -33,7 +29,7 @@ const Pad: React.FunctionComponent<{
         width={width}
         height={height}
         fillOpacity={1}
-        fill={isOn ? velocityToHexColor(PadColor.PRESSED) : color}
+        fill={color}
         y={y}
         x={x}
         onMouseDown={onMouseDown}
@@ -53,7 +49,8 @@ enum Key {
 }
 
 const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
-  const { notesPressed: controlsPressed, tapMode } = useAppState();
+  const { controlsState, notesPressed, tapMode } = useAppState();
+
   const dispatch = useAppDispatch();
 
   const pads: any[] = [];
@@ -65,38 +62,37 @@ const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
     range(0, 8).forEach((col) => {
       let x = Number((76 + (width + 3.13) * col).toFixed(2));
       let y = Number((305 - (height + 3.6) * row).toFixed(2));
+      const controlState = controlsState.get(pad);
+
+      var color = pushColorToHexMap[controlState?.velocity || 0];
+      const multiTapOverrideColor =
+        tapMode === Mode.MultiTap && notesPressed.has(pad)
+          ? Colors.Teal
+          : undefined;
+
       pads.push({
         id: `pad_${pad}`,
         key: `pad_${pad}`,
-        isOn: controlsPressed.has(pad),
         y: y,
         x: x,
         note: pad,
-        color: getPadColor(row, col, tapMode)
+        color: multiTapOverrideColor || color
       });
       pad = pad + 1;
     });
   });
 
-  const handleMouseDown = (note: NoteState) => {};
-
-  const handleMouseUp = () => {};
-
-  const handleMouseLeave = () => {};
-
   return (
     <>
       {pads.map((p) => (
-        <Pad
-          onMouseDown={() => {
-            padDown(dispatch, p.note);
-          }}
-          onMouseUp={() => {
-            padUp(dispatch, p.note);
-          }}
-          key={p.key}
-          {...p}
-        />
+        <Control
+          controlId={p.note}
+          name={`pad_${p.note}`}
+          type={ControlType.NOTE}
+          color={p.color}
+        >
+          <Pad key={p.key} {...p} />
+        </Control>
       ))}
     </>
   );

@@ -15,18 +15,25 @@ interface IControlProps extends React.SVGProps<SVGSVGElement> {
   controlId: ControlId;
   name: string | undefined;
   type: ControlType;
+  color?: string;
 }
 
 const Control: React.FunctionComponent<IControlProps> = ({
   controlId,
   children,
   name,
-  type
+  type,
+  color
 }) => {
-  const [mouseDown, setMouseDown] = React.useState(false);
-  const { notesPressed, tapMode } = useAppState();
+  const { tapMode, notesPressed, controlsPressed } = useAppState();
   const dispatch = useAppDispatch();
-  const isOn = notesPressed.has(ControlId.DELETE);
+  var isTapped = false;
+
+  if (type == ControlType.CC) {
+    isTapped = controlsPressed.has(controlId);
+  } else {
+    isTapped = notesPressed.has(controlId);
+  }
 
   const tap = type == ControlType.CC ? ccDown : padDown;
   const release = type === ControlType.CC ? ccUp : padUp;
@@ -35,20 +42,24 @@ const Control: React.FunctionComponent<IControlProps> = ({
     <g
       id={name}
       onMouseLeave={() => {
-        if (tapMode != Mode.MultiTap) {
-          release(dispatch, controlId);
+        if (tapMode === Mode.MultiTap) {
+          return;
         }
+
+        release(dispatch, controlId);
       }}
       onMouseDown={() => {
-        setMouseDown(true);
         tap(dispatch, controlId);
       }}
       onMouseUp={() => {
-        setMouseDown(false);
+        if (tapMode === Mode.MultiTap) {
+          return;
+        }
+
         release(dispatch, controlId);
       }}
-      fill={"#3C3C3B"}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
+      fill={color || "#3C3C3B"}
+      style={{ opacity: isTapped ? 0.8 : 1 }}
     >
       {children}
     </g>
