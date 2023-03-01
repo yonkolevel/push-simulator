@@ -1,6 +1,8 @@
 import React, { createContext, useReducer } from "react";
 import { ControlId } from "../controls";
 import {
+  SendCCOn,
+  SendCCOff,
   SendNoteOff,
   SendNoteOn
 } from "../../../../wailsjs/go/push/AbletonPush";
@@ -142,6 +144,26 @@ export function padDown(dispatch: Dispatch, id: ControlId) {
 export function padUp(dispatch: Dispatch, id: ControlId) {
   dispatch({ type: ActionType.PAD_UP, payload: { id } });
   SendNoteOff(id);
+}
+
+/**
+ * ccDown - Send a cc on event to the push
+ * @param dispatch
+ * @param id
+ */
+export function ccDown(dispatch: Dispatch, id: ControlId) {
+  dispatch({ type: ActionType.PAD_DOWN, payload: { id } });
+  SendCCOn(id);
+}
+
+/**
+ * ccUp - Send a cc off event to the push
+ * @param dispatch
+ * @param id
+ */
+export function ccUp(dispatch: Dispatch, id: ControlId) {
+  dispatch({ type: ActionType.PAD_UP, payload: { id } });
+  SendCCOff(id);
 }
 
 export function changeTapMode(dispatch: Dispatch, mode: Mode) {

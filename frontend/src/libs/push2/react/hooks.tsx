@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SendCC, SendCCNoteOff } from "../../../../wailsjs/go/push/AbletonPush";
+import { SendCC, SendCCOff } from "../../../../wailsjs/go/push/AbletonPush";
 import { EventsOff, EventsOn } from "../../../../wailsjs/runtime/runtime";
 import { ControlId } from "../controls";
 import { ButtonColor, NoteState } from "../types";
@@ -25,7 +25,7 @@ export const useToggleControl = (
       }
 
       if (v) {
-        SendCCNoteOff(controlId).then((err: any) => {
+        SendCCOff(controlId).then((err: any) => {
           if (!err) {
             console.log(err);
           }

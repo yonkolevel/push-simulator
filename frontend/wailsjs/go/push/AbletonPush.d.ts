@@ -15,9 +15,9 @@ export function RTStart():Promise<void>;
 
 export function SendCC(arg1:number,arg2:number):Promise<void>;
 
-export function SendCCNoteOff(arg1:number):Promise<void>;
+export function SendCCOff(arg1:number):Promise<void>;
 
-export function SendCCNoteOn(arg1:number):Promise<void>;
+export function SendCCOn(arg1:number):Promise<void>;
 
 export function SendNoteOff(arg1:number):Promise<void>;
 

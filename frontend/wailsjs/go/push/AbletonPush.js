@@ -26,12 +26,12 @@ export function SendCC(arg1, arg2) {
   return window['go']['push']['AbletonPush']['SendCC'](arg1, arg2);
 }
 
-export function SendCCNoteOff(arg1) {
-  return window['go']['push']['AbletonPush']['SendCCNoteOff'](arg1);
+export function SendCCOff(arg1) {
+  return window['go']['push']['AbletonPush']['SendCCOff'](arg1);
 }
 
-export function SendCCNoteOn(arg1) {
-  return window['go']['push']['AbletonPush']['SendCCNoteOn'](arg1);
+export function SendCCOn(arg1) {
+  return window['go']['push']['AbletonPush']['SendCCOn'](arg1);
 }
 
 export function SendNoteOff(arg1) {

@@ -17,9 +17,9 @@ import (
 )
 
 type Push interface {
-	SendCCNoteOn(controller uint8) error
+	SendCCOn(controller uint8) error
 	SendCC(controller uint8, value uint8) error
-	SendCCNoteOff(controller uint8) error
+	SendCCOff(controller uint8) error
 	SendNoteOn(note, velocity uint8) error
 	SendNoteOff(note uint8) error
 	SetUserMode() error

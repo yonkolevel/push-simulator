@@ -4,13 +4,13 @@ import (
 	"gitlab.com/gomidi/midi/writer"
 )
 
-// SendNoteOn - Sends a MIDI note on message
-func (p *AbletonPush) SendCCNoteOn(controller uint8) error {
-	err := writer.CcOn(p.LivePortWriter, 60)
+// SendCCOn - Sends a MIDI CC on message
+func (p *AbletonPush) SendCCOn(controller uint8) error {
+	err := writer.CcOn(p.LivePortWriter, controller)
 	return err
 }
 
-// SendNoteOn - Sends a MIDI note on message
+// SendCC - Sends a MIDI CC message
 func (p *AbletonPush) SendCC(controller, value uint8) error {
 	err := writer.ControlChange(p.LivePortWriter, controller, value)
 	return err
@@ -27,7 +27,7 @@ func (p *AbletonPush) SendNoteOff(note uint8) error {
 }
 
 // SendNoteOff - Sends a MIDI note off message
-func (p *AbletonPush) SendCCNoteOff(controller uint8) error {
+func (p *AbletonPush) SendCCOff(controller uint8) error {
 	err := writer.CcOff(p.LivePortWriter, controller)
 	return err
 }

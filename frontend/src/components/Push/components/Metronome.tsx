@@ -3,7 +3,7 @@ import { ControlId } from "../../../libs/push2/controls";
 import { useToggleControl } from "../../../libs/push2/react/hooks";
 import { useMomentaRyPress } from "../../../libs/push2/react/hooks/ui";
 import { ButtonColor } from "../../../libs/push2/types";
-import {SendCCNoteOff, SendCCNoteOn} from '../../../../wailsjs/go/push/AbletonPush'
+import { SendCCOff, SendCCOn } from "../../../../wailsjs/go/push/AbletonPush";
 
 const SvgMetronome = (props: React.SVGProps<SVGSVGElement>) => {
   const ref = React.useRef<SVGGElement>(null);
@@ -24,12 +24,12 @@ const SvgMetronome = (props: React.SVGProps<SVGSVGElement>) => {
 
   const handleMouseDown = React.useCallback(() => {
     setMouseDown(true);
-    SendCCNoteOn(ControlId.METRO_NOME);
+    SendCCOn(ControlId.METRO_NOME);
   }, [window]);
 
   const handleMouseUp = React.useCallback(() => {
     setMouseDown(false);
-    SendCCNoteOff(ControlId.METRO_NOME);
+    SendCCOff(ControlId.METRO_NOME);
   }, [window]);
 
   return (

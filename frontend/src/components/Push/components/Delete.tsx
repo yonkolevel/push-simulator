@@ -6,7 +6,7 @@ import {
   useAppDispatch,
   useAppState
 } from "../../../libs/push2/context/PushContext";
-import { ControlId, controls } from "../../../libs/push2/controls";
+import { ControlId, controls, ControlType } from "../../../libs/push2/controls";
 import Control from "../Control";
 
 const SvgDelete = (props: React.SVGProps<SVGSVGElement>) => {
@@ -14,7 +14,7 @@ const SvgDelete = (props: React.SVGProps<SVGSVGElement>) => {
   const isOn = notesPressed.has(ControlId.DELETE);
 
   return (
-    <Control name="Delete" controlId={ControlId.DELETE}>
+    <Control name="Delete" controlId={ControlId.DELETE} type={ControlType.CC}>
       <path id="Vector_175" d="M28.27 58.33H8.08v20.19h20.19V58.33z" />
       <path
         id="Vector_176"

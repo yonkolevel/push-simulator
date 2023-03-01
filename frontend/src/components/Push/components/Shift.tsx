@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { SendCCNoteOn } from '../../../../wailsjs/go/push/AbletonPush';
+import { SendCCOn } from "../../../../wailsjs/go/push/AbletonPush";
 import { ControlId } from "../../../libs/push2/controls";
 import { useToggleControl } from "../../../libs/push2/react/hooks";
 import { useMomentaRyPress } from "../../../libs/push2/react/hooks/ui";
@@ -25,12 +25,12 @@ const SvgShift = (props: React.SVGProps<SVGSVGElement>) => {
 
   const handleMouseDown = React.useCallback(() => {
     setMouseDown(true);
-    SendCCNoteOn(ControlId.SHIFT);
+    SendCCOn(ControlId.SHIFT);
   }, [window]);
 
   const handleMouseUp = React.useCallback(() => {
     setMouseDown(false);
-    SendCCNoteOn(ControlId.SHIFT);
+    SendCCOn(ControlId.SHIFT);
   }, [window]);
 
   return (
