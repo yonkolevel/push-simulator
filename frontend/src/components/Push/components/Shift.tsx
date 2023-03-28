@@ -1,45 +1,16 @@
 import * as React from "react";
-import { useEffect } from "react";
-import { SendCCOn } from "../../../../wailsjs/go/push/AbletonPush";
-import { ControlId } from "../../../libs/push2/controls";
-import { useToggleControl } from "../../../libs/push2/react/hooks";
-import { useMomentaRyPress } from "../../../libs/push2/react/hooks/ui";
-import { ButtonColor } from "../../../libs/push2/types";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgShift = (props: React.SVGProps<SVGSVGElement>) => {
   const ref = React.useRef<SVGGElement>(null);
 
-  useMomentaRyPress(ref.current);
-
-  const [mouseDown, setMouseDown] = React.useState(false);
-
-  const { isOn, toggleControl } = useToggleControl(
-    ControlId.SHIFT,
-    "one-way",
-    ButtonColor.WHITE
-  );
-
-  useEffect(() => {
-    toggleControl();
-  }, []);
-
-  const handleMouseDown = React.useCallback(() => {
-    setMouseDown(true);
-    SendCCOn(ControlId.SHIFT);
-  }, [window]);
-
-  const handleMouseUp = React.useCallback(() => {
-    setMouseDown(false);
-    SendCCOn(ControlId.SHIFT);
-  }, [window]);
-
   return (
-    <g
+    <Control
       id="shift"
-      ref={ref}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
+      name="shift"
+      type={ControlType.CC}
+      controlId={ControlId.SHIFT}
     >
       <path
         id="Vector_368"
@@ -71,7 +42,7 @@ const SvgShift = (props: React.SVGProps<SVGSVGElement>) => {
         d="M381.28 319.5v1.37h-.4v-1.37h-.17v-.37h.17v-.65h.4v.65h.32v.37h-.32z"
         fill="#fff"
       />
-    </g>
+    </Control>
   );
 };
 

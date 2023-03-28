@@ -1,11 +1,15 @@
 import * as React from "react";
-import { useToggleControl } from "../../../libs/push2/react/hooks";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgDuplicate = (props: React.SVGProps<SVGSVGElement>) => {
-  const { isOn } = useToggleControl(59);
-  console.log(isOn);
   return (
-    <g id="duplicate">
+    <Control
+      id="duplicate"
+      name="duplicate"
+      type={ControlType.CC}
+      controlId={ControlId.DUPLICATE}
+    >
       <path
         id="Vector_220"
         d="M28.18 200.11H7.99v20.19h20.19v-20.19z"
@@ -52,7 +56,7 @@ const SvgDuplicate = (props: React.SVGProps<SVGSVGElement>) => {
         d="M25.52 204.9h-1.25a.531.531 0 00.14.34.4.4 0 00.146.1.49.49 0 00.424-.04c.084-.081.158-.171.22-.27l.34.19c-.05.082-.106.159-.17.23a.8.8 0 01-.4.25 1.13 1.13 0 01-.26 0 .816.816 0 01-.63-.25 1 1 0 01-.23-.67.93.93 0 01.23-.67.791.791 0 01.61-.26.76.76 0 01.61.25 1 1 0 01.22.68v.12zm-.41-.33a.39.39 0 00-.41-.32.33.33 0 00-.14 0 .672.672 0 00-.12.06l-.09.11a.39.39 0 00-.05.13l.81.02z"
         fill="#fff"
       />
-    </g>
+    </Control>
   );
 };
 

@@ -86,6 +86,7 @@ const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
     <>
       {pads.map((p) => (
         <Control
+          key={p.note}
           controlId={p.note}
           name={`pad_${p.note}`}
           type={ControlType.NOTE}

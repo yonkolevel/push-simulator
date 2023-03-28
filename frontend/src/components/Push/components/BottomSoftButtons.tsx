@@ -73,7 +73,7 @@ const BottomSoftButtons: React.FunctionComponent<IBottomSoftButtonsProps> = (
           x = x + width + 3.13;
         }
 
-        return <SoftButton xPosition={x} controlId={startSoftButton + index} />;
+        return <SoftButton key={index} xPosition={x} controlId={startSoftButton + index} />;
       })}
     </svg>
   );

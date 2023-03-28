@@ -58,7 +58,7 @@ const Knob: React.FunctionComponent<KnobProps> = ({ id, controlId, cx, cy }) => 
         r='6.78'
         fill='transparent'
         stroke='#d2d3d4'
-        stroke-width='1'
+        strokeWidth='1'
       />
       <StyledCircle
         cx={cx}
@@ -66,7 +66,7 @@ const Knob: React.FunctionComponent<KnobProps> = ({ id, controlId, cx, cy }) => 
         r='6.78'
         fill='transparent'
         stroke={Colors.Green}
-        stroke-width='1'
+        strokeWidth='1'
         dashArray={
           yPosition < 0 ? Math.abs(yPosition * (CPerimeter * 0.03)) : 0
         }
@@ -98,7 +98,7 @@ const SvgRotaryButtons = (props: React.SVGProps<SVGSVGElement>) => {
         }
 
         return (
-          <Knob id={`knob-${index + 1}`} controlId={71 + index} cx={x} cy={y} />
+          <Knob key={index} id={`knob-${index + 1}`} controlId={71 + index} cx={x} cy={y} />
         );
       })}
 

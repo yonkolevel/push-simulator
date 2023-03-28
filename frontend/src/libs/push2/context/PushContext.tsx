@@ -132,6 +132,7 @@ export function AppProvider({ children }: AppProviderPros) {
 
   React.useEffect(() => {
     EventsOn("note_on", (note: number, velocity) => {
+      console.log("note_on")
       dispatch({
         type: ActionType.NOTE_ON,
         payload: { id: note, velocity: velocity }
@@ -139,6 +140,7 @@ export function AppProvider({ children }: AppProviderPros) {
     });
 
     EventsOn("note_off", (note: number) => {
+      console.log("note_off")
       dispatch({
         type: ActionType.NOTE_OFF,
         payload: { id: note }
