@@ -173,7 +173,14 @@ export function AppProvider({ children }: AppProviderPros) {
       }
     };
 
-    const handleKeyUp = () => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.shiftKey) {
+        state.controlsPressed.forEach((id) => {
+          ccUp(dispatch, id);
+          padUp(dispatch, id);
+        });
+      }
+
       dispatch({ type: ActionType.RESET_TAP_MODE });
     };
 
