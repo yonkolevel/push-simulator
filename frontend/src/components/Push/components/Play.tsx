@@ -1,8 +1,6 @@
-import * as React from 'react';
-import { Colors } from '../../../libs/push2/colors';
-import { ControlId } from '../../../libs/push2/controls';
-import { useDeviceNoteState, useToggleControl } from '../../../libs/push2/react/hooks';
-import { ButtonColor } from '../../../libs/push2/types';
+import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 declare global {
   interface Window {
@@ -13,24 +11,12 @@ declare global {
 }
 
 const SvgPlay = (props: React.SVGProps<SVGSVGElement>) => {
-  const {  toggleControl } = useToggleControl(
-    ControlId.PLAY,
-    '2-ways',
-    ButtonColor.GREEN
-  );
-  const {notesState} = useDeviceNoteState()
-  const [mouseDown, setMouseDown] = React.useState(false);
-const controlState = notesState.get(ControlId.PLAY)
-
   return (
-    <g
-      onMouseDown={() => setMouseDown(true)}
-      onMouseUp={() => {
-        setMouseDown(false);
-      }}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
-      id='play'
-      onClick={toggleControl}
+    <Control
+      name="play"
+      id="play"
+      type={ControlType.CC}
+      controlId={ControlId.PLAY}
     >
       <path
         id='Vector_152'
@@ -40,10 +26,10 @@ const controlState = notesState.get(ControlId.PLAY)
       <path
         id='Vector_153'
         d='M23.03 314.64l-8.82 5.42v-10.84l8.82 5.42z'
-        stroke={controlState?.isOn ? Colors.Green : '#fff'}
+        stroke="#fff"
         strokeMiterlimit={10}
       />
-    </g>
+    </Control>
   );
 };
 

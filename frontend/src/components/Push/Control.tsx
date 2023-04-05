@@ -46,7 +46,9 @@ const Control: React.FunctionComponent<IControlProps> = ({
           return;
         }
 
-        release(dispatch, controlId);
+        if (isTapped) {
+          release(dispatch, controlId);
+        }
       }}
       onMouseDown={() => {
         tap(dispatch, controlId);
