@@ -58,6 +58,7 @@ import SvgSoftButton9 from "./SoftButton9";
 import SvgSolo from "./Solo";
 import SvgStopClip from "./StopClip";
 import SvgTapTempo from "./TapTempo";
+import TopSoftButtons from "./TopSoftButtons";
 import SvgTouchStrip from "./TouchStrip";
 import SvgUndo from "./Undo";
 import SvgUser from "./User";
@@ -165,15 +166,7 @@ const SvgAbletonPush2: React.FunctionComponent<
               <SvgDivision32ThTriplet />
 
               <SvgOctaveUp />
-
-              <SvgSoftButton9 />
-              <SvgSoftButton10 />
-              <SvgSoftButton11 />
-              <SvgSoftButton12 />
-              <SvgSoftButton13 />
-              <SvgSoftButton14 />
-              <SvgSoftButton15 />
-              <SvgSoftButton16 />
+              <TopSoftButtons />
             </InnnerSvg>
           </g>
         </svg>

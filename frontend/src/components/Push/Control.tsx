@@ -8,7 +8,7 @@ import {
   useAppDispatch,
   useAppState
 } from "../../libs/push2/context/PushContext";
-import { ControlId, controls, ControlType } from "../../libs/push2/controls";
+import { ControlId, ControlType } from "../../libs/push2/controls";
 import { Mode } from "../../libs/push2/core";
 
 interface IControlProps extends React.SVGProps<SVGSVGElement> {

@@ -26,12 +26,14 @@ interface Action {
 
 type ControlState = {
   id: ControlId;
+  type: ControlType;
   velocity: number;
 };
 
 type AppState = {
   notesPressed: Set<ControlId>;
   controlsPressed: Set<ControlId>;
+  noteState: Map<ControlId, ControlState>;
   controlsState: Map<ControlId, ControlState>;
   tapMode: Mode;
 };
@@ -46,6 +48,7 @@ const initialState: AppState = {
   notesPressed: new Set(),
   controlsPressed: new Set(),
   controlsState: new Map(),
+  noteState: new Map(),
   tapMode: Mode.Idle
 };
 
@@ -100,7 +103,7 @@ const reducer = (state: AppState, action: Action): AppState => {
 
     case ActionType.NOTE_ON: {
       const { id, velocity } = action.payload;
-      state.controlsState.set(id, { id, velocity });
+      state.noteState.set(id, { id, velocity, type: ControlType.NOTE });
       return {
         ...state
       };
@@ -108,7 +111,7 @@ const reducer = (state: AppState, action: Action): AppState => {
 
     case ActionType.NOTE_OFF: {
       const { id } = action.payload;
-      state.controlsState.set(id, { id, velocity: 0 });
+      state.noteState.set(id, { id, velocity: 0, type: ControlType.NOTE });
       return {
         ...state
       };
@@ -116,7 +119,7 @@ const reducer = (state: AppState, action: Action): AppState => {
 
     case ActionType.CONTROL_CHANGE: {
       const { id, velocity } = action.payload;
-      state.controlsState.set(id, { id, velocity });
+      state.controlsState.set(id, { id, velocity, type: ControlType.CC });
       return {
         ...state
       };

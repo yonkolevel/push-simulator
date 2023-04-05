@@ -49,7 +49,7 @@ enum Key {
 }
 
 const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
-  const { controlsState, notesPressed, tapMode } = useAppState();
+  const { noteState, notesPressed, tapMode } = useAppState();
 
   const dispatch = useAppDispatch();
 
@@ -62,9 +62,9 @@ const SvgPads: React.FunctionComponent<PadsProps> = (props) => {
     range(0, 8).forEach((col) => {
       let x = Number((76 + (width + 3.13) * col).toFixed(2));
       let y = Number((305 - (height + 3.6) * row).toFixed(2));
-      const controlState = controlsState.get(pad);
+      const padState = noteState.get(pad);
 
-      var color = pushColorToHexMap[controlState?.velocity || 0];
+      var color = pushColorToHexMap[padState?.velocity || 0];
       const multiTapOverrideColor =
         tapMode === Mode.MultiTap && notesPressed.has(pad)
           ? Colors.Teal
