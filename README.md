@@ -18,3 +18,8 @@ to this in your browser, and you can call your Go code from devtools.
 ## Building
 
 To build a redistributable, production mode package, use `wails build`.
+
+
+## Push 2 related docs
+[Push Display Interface](https://github.com/yonkolevel/push-simulator)
+[Push 2 User Manual](https://www.ableton.com/en/manual/using-push-2/)
