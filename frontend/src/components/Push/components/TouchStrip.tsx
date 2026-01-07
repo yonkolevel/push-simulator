@@ -1,6 +1,6 @@
 import * as React from "react";
 import { animated, useSpring } from "react-spring";
-import { useGesture, useMove } from "react-use-gesture";
+import { useGesture, useMove } from "@use-gesture/react";
 import { SendPitchBend } from "../../../../wailsjs/go/push/AbletonPush";
 
 enum Mode {

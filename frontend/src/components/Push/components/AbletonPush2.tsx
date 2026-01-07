@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import * as React from "react";
 import SvgAccent from "./Accent";
@@ -88,15 +88,15 @@ const SvgAbletonPush2: React.FunctionComponent<
   React.SVGProps<SVGElement> | any
 > = ({ ...props }) => {
   return (
-    <Flex>
-      <Box width={1}>
-        <svg
-          width="100vw"
-          height="100vh"
-          viewBox="0 0 422 339"
-          fill="none"
-          {...props}
-        >
+    <Flex justify="center" align="center" w="100%" h="100%">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 422 339"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+        {...props}
+      >
           <g id="ableton-push2">
             <path
               id="screen"
@@ -170,7 +170,6 @@ const SvgAbletonPush2: React.FunctionComponent<
             </InnnerSvg>
           </g>
         </svg>
-      </Box>
     </Flex>
   );
 };
