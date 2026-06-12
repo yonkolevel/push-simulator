@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Colors } from "../../libs/push2/colors";
+import * as React from 'react';
+import { Colors } from '../../libs/push2/colors';
 import {
   ccDown,
   ccUp,
   padDown,
   padUp,
   useAppDispatch,
-  useAppState
-} from "../../libs/push2/context/PushContext";
-import { ControlId, ControlType } from "../../libs/push2/controls";
-import { Mode } from "../../libs/push2/core";
+  useAppState,
+} from '../../libs/push2/context/PushContext';
+import { ControlId, ControlType } from '../../libs/push2/controls';
+import { Mode } from '../../libs/push2/core';
 
 interface IControlProps extends React.SVGProps<SVGSVGElement> {
   controlId: ControlId;
@@ -23,14 +23,22 @@ const Control: React.FunctionComponent<IControlProps> = ({
   children,
   name,
   type,
-  color
+  color,
 }) => {
-  const { tapMode, notesPressed, controlsPressed } = useAppState();
+  const { tapMode, notesPressed, controlsPressed, controlsState } =
+    useAppState();
   const dispatch = useAppDispatch();
   var isTapped = false;
+  var isOn = false;
 
   if (type == ControlType.CC) {
     isTapped = controlsPressed.has(controlId);
+    const controllerState = controlsState.get(controlId);
+    if (controllerState && controllerState.velocity > 0) {
+      isOn = true;
+    } else {
+      isOn = false;
+    }
   } else {
     isTapped = notesPressed.has(controlId);
   }
@@ -60,7 +68,7 @@ const Control: React.FunctionComponent<IControlProps> = ({
 
         release(dispatch, controlId);
       }}
-      fill={color || "#3C3C3B"}
+      fill={color || '#3C3C3B'}
       style={{ opacity: isTapped ? 0.8 : 1 }}
     >
       {children}

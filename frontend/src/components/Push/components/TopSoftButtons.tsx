@@ -1,10 +1,13 @@
-import * as React from "react";
+import * as React from 'react';
 import {
+  ccDown,
+  ccUp,
   useAppDispatch,
-  useAppState
-} from "../../../libs/push2/context/PushContext";
-import { ControlType } from "../../../libs/push2/controls";
-import Control from "../Control";
+  useAppState,
+} from '../../../libs/push2/context/PushContext';
+import { ControlId, ControlType } from '../../../libs/push2/controls';
+import Control from '../Control';
+import { Colors } from '../../../libs/push2/colors';
 
 interface IBottomSoftButtonsProps {}
 
@@ -20,10 +23,18 @@ const SoftButton: React.FunctionComponent<SoftButtonProps> = ({
   controlId,
   ...props
 }) => {
-  const { notesPressed } = useAppState();
+  const { notesPressed, controlsState } = useAppState();
   const [mouseDown, setMouseDown] = React.useState(false);
   const dispatch = useAppDispatch();
-  const isOn = notesPressed.has(controlId);
+
+  var isOn = false;
+
+  const controllerState = controlsState.get(controlId);
+  if (controllerState && controllerState.velocity > 0) {
+    isOn = true;
+  } else {
+    isOn = false;
+  }
 
   return (
     <Control
@@ -33,23 +44,26 @@ const SoftButton: React.FunctionComponent<SoftButtonProps> = ({
     >
       <svg
         x={xPosition}
-        id="soft-button-9"
-        onMouseDown={() => setMouseDown(true)}
+        id='soft-button-9'
+        onMouseDown={() => {
+          setMouseDown(true);
+          ccDown(dispatch, controlId);
+        }}
         onMouseUp={() => {
           setMouseDown(false);
+          ccUp(dispatch, controlId);
         }}
         style={{ opacity: mouseDown ? 0.8 : 1 }}
-        onClick={() => {}}
       >
         <path
-          id="Vector_417"
-          d="M105.84 33.35H76.61v11.76h29.23V33.35z"
-          fill="#3C3C3B"
+          id='Vector_417'
+          d='M105.84 33.35H76.61v11.76h29.23V33.35z'
+          fill='#3C3C3B'
         />
         <path
-          id="Vector_418"
-          d="M103.37 43.23H79.09a.45.45 0 00-.45.45v.04c0 .248.201.45.45.45h24.28a.45.45 0 00.45-.45v-.04a.45.45 0 00-.45-.45z"
-          fill="#9D9D9C"
+          id='Vector_418'
+          d='M103.37 43.23H79.09a.45.45 0 00-.45.45v.04c0 .248.201.45.45.45h24.28a.45.45 0 00.45-.45v-.04a.45.45 0 00-.45-.45z'
+          fill={isOn ? Colors.Green : '#fff'}
         />
       </svg>
     </Control>
