@@ -32,6 +32,8 @@ export default function MidiStatus() {
 
   const activeNotes = notesPressed.size;
   const activeControls = controlsPressed.size;
+  const sentEvents = midiEvents.filter((event) => event.direction === "sent").length;
+  const receivedEvents = midiEvents.filter((event) => event.direction === "received").length;
   const [backendStatus, setBackendStatus] = useState<BackendMIDIStatus | null>(null);
 
   useEffect(() => {
@@ -80,6 +82,11 @@ export default function MidiStatus() {
     `- Ready: ${backendStatus?.ready ? "yes" : "no"}`,
     `- Backend mode: ${backendStatus?.mode || "unknown"}`,
     `- Send channel: ${midiChannel}`,
+    "",
+    "Event totals",
+    `- Sent: ${sentEvents}`,
+    `- Received: ${receivedEvents}`,
+    `- Stored: ${midiEvents.length}`,
     "",
     "Current state",
     `- Active notes: ${activeNotes}${activeNotes ? ` (${Array.from(notesPressed).join(", ")})` : ""}`,
@@ -231,6 +238,19 @@ export default function MidiStatus() {
             {midiChannel}
           </Badge>
         </Flex>
+        <Flex justify="space-between" align="center">
+          <Text color="whiteAlpha.800" fontSize="sm">
+            Event Direction
+          </Text>
+          <HStack spacing={1.5}>
+            <Badge colorScheme="teal" variant="subtle" px={2} py={1} borderRadius="md">
+              {sentEvents} sent
+            </Badge>
+            <Badge colorScheme="purple" variant="subtle" px={2} py={1} borderRadius="md">
+              {receivedEvents} received
+            </Badge>
+          </HStack>
+        </Flex>
         <Box bg="whiteAlpha.100" border="1px solid" borderColor="whiteAlpha.100" borderRadius="lg" p={3}>
           <Text color="whiteAlpha.600" fontSize="xs" mb={1}>
             Last message
@@ -293,7 +313,7 @@ export default function MidiStatus() {
         <Box bg="whiteAlpha.50" border="1px solid" borderColor="whiteAlpha.100" borderRadius="lg" p={3}>
           <Flex justify="space-between" align="center" mb={2}>
             <Text color="whiteAlpha.600" fontSize="xs">
-              Event history · {midiEvents.length} saved
+              Event history · {midiEvents.length} saved · {sentEvents} sent / {receivedEvents} received
             </Text>
             <Flex gap={1}>
               <Button size="xs" variant="ghost" color="whiteAlpha.800" onClick={copyEventLog}>
