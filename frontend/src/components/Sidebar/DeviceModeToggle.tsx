@@ -13,7 +13,7 @@ export default function DeviceModeToggle() {
 
   const handleModeChange = async (newMode: DeviceMode) => {
     try {
-      releaseHeldMidi(dispatch, { notesPressed, controlsPressed });
+      await releaseHeldMidi(dispatch, { notesPressed, controlsPressed });
       if (newMode === "live") {
         await SetLiveMode();
       } else {

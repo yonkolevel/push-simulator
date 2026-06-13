@@ -26,7 +26,7 @@ const eventLogLine = (event: ReturnType<typeof useAppState>["midiEvents"][number
 };
 
 export default function MidiStatus() {
-  const { notesPressed, controlsPressed, lastMidiEvent, midiEvents, selectedControl, midiChannel } = useAppState();
+  const { notesPressed, controlsPressed, lastMidiEvent, midiEvents, selectedControl, lastMidiError, midiChannel } = useAppState();
   const dispatch = useAppDispatch();
   const toast = useToast();
 
@@ -101,6 +101,7 @@ export default function MidiStatus() {
     `- Last sent: ${eventLabel(lastSentEvent)}`,
     `- Last received: ${eventLabel(lastReceivedEvent)}`,
     `- Selected control: ${selectedControl ? `${selectedControl.name} (${selectedControl.type.toUpperCase()} ${selectedControl.id})` : "none"}`,
+    `- Last MIDI error: ${lastMidiError ? `${lastMidiError.label}: ${lastMidiError.message}` : "none"}`,
     "",
     "Recent events",
     ...(midiEvents.length ? midiEvents.map(eventLogLine) : ["- none"]),
@@ -285,6 +286,19 @@ export default function MidiStatus() {
             </Box>
           </Flex>
         </Box>
+        {lastMidiError && (
+          <Box bg="red.900" border="1px solid" borderColor="red.400" borderRadius="lg" p={3}>
+            <Text color="red.100" fontSize="xs" fontWeight="bold" mb={1}>
+              Last MIDI error
+            </Text>
+            <Text color="white" fontSize="xs" fontFamily="mono">
+              {lastMidiError.label}: {lastMidiError.message}
+            </Text>
+            <Text color="red.100" fontSize="xs" mt={1}>
+              {new Date(lastMidiError.timestamp).toLocaleTimeString()}
+            </Text>
+          </Box>
+        )}
         <Box bg="whiteAlpha.100" border="1px solid" borderColor="whiteAlpha.100" borderRadius="lg" p={3}>
           <Text color="whiteAlpha.600" fontSize="xs" mb={1}>
             Control inspector

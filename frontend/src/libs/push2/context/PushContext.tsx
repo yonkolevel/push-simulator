@@ -69,6 +69,12 @@ export type SelectedControl = {
   id: ControlId;
 };
 
+export type MidiErrorSummary = {
+  label: string;
+  message: string;
+  timestamp: number;
+};
+
 enum ActionType {
   PAD_DOWN,
   PAD_UP,
@@ -83,6 +89,7 @@ enum ActionType {
   SET_MIDI_CHANNEL,
   SET_SHOW_PAD_LABELS,
   CLEAR_MIDI_EVENTS,
+  MIDI_ERROR,
   PITCH_BEND,
 }
 
@@ -100,6 +107,7 @@ type Action =
   | { type: ActionType.SET_MIDI_CHANNEL; payload: { channel: number } }
   | { type: ActionType.SET_SHOW_PAD_LABELS; payload: { show: boolean } }
   | { type: ActionType.CLEAR_MIDI_EVENTS }
+  | { type: ActionType.MIDI_ERROR; payload: MidiErrorSummary }
   | { type: ActionType.PITCH_BEND; payload: { direction: 'sent' | 'received'; value: number; channel?: number } };
 
 type ControlState = {
@@ -117,6 +125,7 @@ export type AppState = {
   lastMidiEvent?: MidiEventSummary;
   midiEvents: MidiEventSummary[];
   selectedControl?: SelectedControl;
+  lastMidiError?: MidiErrorSummary;
   padVelocity: number;
   midiChannel: number;
   showPadLabels: boolean;
@@ -389,6 +398,13 @@ const reducer = (state: AppState, action: Action): AppState => {
       };
     }
 
+    case ActionType.MIDI_ERROR: {
+      return {
+        ...state,
+        lastMidiError: action.payload,
+      };
+    }
+
     case ActionType.PITCH_BEND: {
       return {
         ...state,
@@ -545,14 +561,53 @@ export function AppProvider({ children }: AppProviderProps) {
   );
 }
 
+const midiErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error || 'Unknown MIDI error');
+
+function recordMidiError(dispatch: Dispatch, label: string, error: unknown) {
+  dispatch({
+    type: ActionType.MIDI_ERROR,
+    payload: {
+      label,
+      message: midiErrorMessage(error),
+      timestamp: Date.now(),
+    },
+  });
+}
+
+function runMidiCommand(dispatch: Dispatch, label: string, command: () => Promise<void> | void) {
+  try {
+    void Promise.resolve(command()).catch((error) => recordMidiError(dispatch, label, error));
+  } catch (error) {
+    recordMidiError(dispatch, label, error);
+  }
+}
+
+function runMidiBatch(dispatch: Dispatch, label: string, commands: Array<() => Promise<void> | void>) {
+  const tasks = commands.map((command) => {
+    try {
+      return Promise.resolve(command());
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  });
+
+  void Promise.allSettled(tasks).then((results) => {
+    const failures = results.filter((result) => result.status === 'rejected') as PromiseRejectedResult[];
+    if (failures.length > 0) {
+      recordMidiError(dispatch, label, `${failures.length} MIDI message(s) failed: ${midiErrorMessage(failures[0].reason)}`);
+    }
+  });
+}
+
 export function padDown(dispatch: Dispatch, id: ControlId, velocity = 100) {
   dispatch({ type: ActionType.PAD_DOWN, payload: { id, velocity } });
-  SendNoteOn(id, velocity);
+  runMidiCommand(dispatch, `note on ${id}`, () => SendNoteOn(id, velocity));
 }
 
 export function padUp(dispatch: Dispatch, id: ControlId) {
   dispatch({ type: ActionType.PAD_UP, payload: { id } });
-  SendNoteOff(id);
+  runMidiCommand(dispatch, `note off ${id}`, () => SendNoteOff(id));
 }
 
 /**
@@ -563,7 +618,7 @@ export function ccDown(dispatch: Dispatch, id: ControlId) {
     type: ActionType.PAD_DOWN,
     payload: { id, type: ControlType.CC },
   });
-  SendCCOn(id);
+  runMidiCommand(dispatch, `cc on ${id}`, () => SendCCOn(id));
 }
 
 /**
@@ -571,7 +626,7 @@ export function ccDown(dispatch: Dispatch, id: ControlId) {
  */
 export function ccUp(dispatch: Dispatch, id: ControlId) {
   dispatch({ type: ActionType.PAD_UP, payload: { id, type: ControlType.CC } });
-  SendCCOff(id);
+  runMidiCommand(dispatch, `cc off ${id}`, () => SendCCOff(id));
 }
 
 export function changeTapMode(dispatch: Dispatch, mode: Mode) {
@@ -579,16 +634,18 @@ export function changeTapMode(dispatch: Dispatch, mode: Mode) {
 }
 
 export function panicAllOff(dispatch: Dispatch) {
+  const commands: Array<() => Promise<void> | void> = [];
   for (let note = 0; note <= 127; note += 1) {
-    SendNoteOff(note);
+    commands.push(() => SendNoteOff(note));
   }
 
   for (let controller = 0; controller <= 127; controller += 1) {
-    SendCCOff(controller);
+    commands.push(() => SendCCOff(controller));
   }
 
-  SendCC(123, 0);
-  SendPitchBend(0);
+  commands.push(() => SendCC(123, 0));
+  commands.push(() => SendPitchBend(0));
+  runMidiBatch(dispatch, 'panic reset', commands);
   dispatch({ type: ActionType.PANIC_ALL_OFF });
   dispatch({
     type: ActionType.PITCH_BEND,
@@ -694,7 +751,7 @@ export function setPadVelocity(dispatch: Dispatch, velocity: number) {
   dispatch({ type: ActionType.SET_PAD_VELOCITY, payload: { velocity: safeVelocity } });
 }
 
-export function releaseHeldMidi(dispatch: Dispatch, heldState?: HeldMidiState) {
+export async function releaseHeldMidi(dispatch: Dispatch, heldState?: HeldMidiState) {
   const heldNotes = Array.from(heldState?.notesPressed ?? []);
   const heldControls = Array.from(heldState?.controlsPressed ?? []);
 
@@ -702,9 +759,16 @@ export function releaseHeldMidi(dispatch: Dispatch, heldState?: HeldMidiState) {
     return false;
   }
 
-  heldNotes.forEach((note) => SendNoteOff(note));
-  heldControls.forEach((controller) => SendCCOff(controller));
-  SendPitchBend(0);
+  const results = await Promise.allSettled([
+    ...heldNotes.map((note) => SendNoteOff(note)),
+    ...heldControls.map((controller) => SendCCOff(controller)),
+    SendPitchBend(0),
+  ]);
+  const failures = results.filter((result) => result.status === 'rejected') as PromiseRejectedResult[];
+  if (failures.length > 0) {
+    recordMidiError(dispatch, 'release held MIDI', `${failures.length} MIDI message(s) failed: ${midiErrorMessage(failures[0].reason)}`);
+  }
+
   dispatch({ type: ActionType.RESET_TAP_MODE });
   dispatch({ type: ActionType.PITCH_BEND, payload: { direction: 'sent', value: 0 } });
   return true;
@@ -719,9 +783,15 @@ export async function setMidiChannel(
 
   // Release anything held on the current backend channel before switching.
   // Otherwise a note-on can be sent on channel N and the note-off on channel M.
-  releaseHeldMidi(dispatch, heldState);
+  await releaseHeldMidi(dispatch, heldState);
 
-  await SetChannel(safeChannel);
+  try {
+    await SetChannel(safeChannel);
+  } catch (error) {
+    recordMidiError(dispatch, 'set channel', error);
+    return;
+  }
+
   writeStoredValue(STORAGE_KEYS.midiChannel, safeChannel);
   dispatch({ type: ActionType.SET_MIDI_CHANNEL, payload: { channel: safeChannel } });
 }
@@ -737,7 +807,7 @@ export function clearMidiEvents(dispatch: Dispatch) {
 
 export function sendPitchBend(dispatch: Dispatch, value: number) {
   const safeValue = Math.max(-8192, Math.min(8191, Math.round(value)));
-  SendPitchBend(safeValue);
+  runMidiCommand(dispatch, `pitch bend ${safeValue}`, () => SendPitchBend(safeValue));
   dispatch({
     type: ActionType.PITCH_BEND,
     payload: { direction: 'sent', value: safeValue },

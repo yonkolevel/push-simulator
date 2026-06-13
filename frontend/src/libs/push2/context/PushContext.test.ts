@@ -72,8 +72,8 @@ describe('Push context MIDI helpers', () => {
     );
   });
 
-  test('releases held MIDI state before route changes', () => {
-    const released = releaseHeldMidi(dispatch, {
+  test('releases held MIDI state before route changes', async () => {
+    const released = await releaseHeldMidi(dispatch, {
       notesPressed: new Set([60 as ControlId]),
       controlsPressed: new Set([85 as ControlId]),
     });
@@ -104,7 +104,7 @@ describe('Push context MIDI helpers', () => {
   });
 
   test('does not send extra releases when changing channel with nothing held', async () => {
-    const released = releaseHeldMidi(dispatch, {
+    const released = await releaseHeldMidi(dispatch, {
       notesPressed: new Set(),
       controlsPressed: new Set(),
     });
@@ -118,6 +118,25 @@ describe('Push context MIDI helpers', () => {
     expect(SendCCOff).not.toHaveBeenCalled();
     expect(SendPitchBend).not.toHaveBeenCalled();
     expect(SetChannel).toHaveBeenCalledWith(4);
+  });
+
+  test('records MIDI errors when channel changes fail', async () => {
+    (SetChannel as jest.Mock).mockRejectedValueOnce(new Error('writer unavailable'));
+
+    await setMidiChannel(dispatch, 5, {
+      notesPressed: new Set(),
+      controlsPressed: new Set(),
+    });
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          label: 'set channel',
+          message: 'writer unavailable',
+        }),
+      })
+    );
+    expect((globalThis as any).window.localStorage.setItem).not.toHaveBeenCalled();
   });
 
   test('does not start pad sweep when already cancelled', async () => {
