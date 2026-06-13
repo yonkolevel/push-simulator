@@ -37,6 +37,9 @@ export default function MidiStatus() {
   const lastSentEvent = midiEvents.find((event) => event.direction === "sent");
   const lastReceivedEvent = midiEvents.find((event) => event.direction === "received");
   const [backendStatus, setBackendStatus] = useState<BackendMIDIStatus | null>(null);
+  const activeOutputPort = backendStatus?.mode === "user"
+    ? backendStatus?.userPort || "Ableton Push 2 User Port"
+    : backendStatus?.livePort || "Ableton Push 2 Live Port";
 
   useEffect(() => {
     let cancelled = false;
@@ -83,6 +86,7 @@ export default function MidiStatus() {
     `- User: ${backendStatus?.userPort || "Ableton Push 2 User Port"}`,
     `- Ready: ${backendStatus?.ready ? "yes" : "no"}`,
     `- Backend mode: ${backendStatus?.mode || "unknown"}`,
+    `- Active output: ${activeOutputPort}`,
     `- Send channel: ${midiChannel}`,
     "",
     "Event totals",
@@ -128,7 +132,7 @@ export default function MidiStatus() {
       "Simulator build/run mode: wails dev / wails build app",
       "MidiCircuit app/version:",
       "MidiCircuit platform: macOS / iOS simulator / iOS device",
-      `Connected port: ${backendStatus?.livePort || "Ableton Push 2 Live Port"} / ${backendStatus?.userPort || "Ableton Push 2 User Port"}`,
+      `Connected/listening port: ${activeOutputPort}`,
       "",
       "## Automated smoke checks",
       "",
@@ -316,6 +320,14 @@ export default function MidiStatus() {
               {backendStatus?.mode || "unknown"}
             </Text>
           </Flex>
+          <Box mt={2}>
+            <Text color="whiteAlpha.600" fontSize="xs">
+              Active output
+            </Text>
+            <Text color="teal.100" fontSize="xs" fontFamily="mono">
+              {activeOutputPort}
+            </Text>
+          </Box>
           <Button
             mt={3}
             w="100%"
