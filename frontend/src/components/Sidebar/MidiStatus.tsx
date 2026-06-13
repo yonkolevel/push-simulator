@@ -73,26 +73,30 @@ export default function MidiStatus() {
     }
   };
 
+  const sharedReportSections = () => [
+    "Ports",
+    `- Live: ${backendStatus?.livePort || "Ableton Push 2 Live Port"}`,
+    `- User: ${backendStatus?.userPort || "Ableton Push 2 User Port"}`,
+    `- Ready: ${backendStatus?.ready ? "yes" : "no"}`,
+    `- Backend mode: ${backendStatus?.mode || "unknown"}`,
+    `- Send channel: ${midiChannel}`,
+    "",
+    "Current state",
+    `- Active notes: ${activeNotes}${activeNotes ? ` (${Array.from(notesPressed).join(", ")})` : ""}`,
+    `- Active controls: ${activeControls}${activeControls ? ` (${Array.from(controlsPressed).join(", ")})` : ""}`,
+    `- Last message: ${eventLabel(lastMidiEvent)}`,
+    `- Selected control: ${selectedControl ? `${selectedControl.name} (${selectedControl.type.toUpperCase()} ${selectedControl.id})` : "none"}`,
+    "",
+    "Recent events",
+    ...(midiEvents.length ? midiEvents.map(eventLogLine) : ["- none"]),
+  ];
+
   const copyDebugReport = async () => {
     const report = [
       "Ableton Push 2 Simulator Debug Report",
       `Generated: ${new Date().toLocaleString()}`,
       "",
-      "Ports",
-      `- Live: ${backendStatus?.livePort || "Ableton Push 2 Live Port"}`,
-      `- User: ${backendStatus?.userPort || "Ableton Push 2 User Port"}`,
-      `- Ready: ${backendStatus?.ready ? "yes" : "no"}`,
-      `- Backend mode: ${backendStatus?.mode || "unknown"}`,
-      `- Send channel: ${midiChannel}`,
-      "",
-      "Current state",
-      `- Active notes: ${activeNotes}${activeNotes ? ` (${Array.from(notesPressed).join(", ")})` : ""}`,
-      `- Active controls: ${activeControls}${activeControls ? ` (${Array.from(controlsPressed).join(", ")})` : ""}`,
-      `- Last message: ${eventLabel(lastMidiEvent)}`,
-      `- Selected control: ${selectedControl ? `${selectedControl.name} (${selectedControl.type.toUpperCase()} ${selectedControl.id})` : "none"}`,
-      "",
-      "Recent events",
-      ...(midiEvents.length ? midiEvents.map(eventLogLine) : ["- none"]),
+      ...sharedReportSections(),
     ].join("\n");
 
     try {
@@ -100,6 +104,73 @@ export default function MidiStatus() {
       toast({ title: "Debug report copied", status: "success", duration: 2200 });
     } catch {
       toast({ title: "Could not copy debug report", status: "error", duration: 2800 });
+    }
+  };
+
+  const copyVerificationReport = async () => {
+    const report = [
+      "# MidiCircuit verification report",
+      "",
+      `Date/time: ${new Date().toLocaleString()}`,
+      "Tester:",
+      "Simulator commit:",
+      "Simulator build/run mode: wails dev / wails build app",
+      "MidiCircuit app/version:",
+      "MidiCircuit platform: macOS / iOS simulator / iOS device",
+      `Connected port: ${backendStatus?.livePort || "Ableton Push 2 Live Port"} / ${backendStatus?.userPort || "Ableton Push 2 User Port"}`,
+      "",
+      "## Automated smoke checks",
+      "",
+      "- [ ] Port visibility: `go run ./tools/check-midi-ports.go`",
+      "  Evidence:",
+      "- [ ] External listener: `go run ./tools/check-midi-ports.go -listen -port \"Ableton Push 2 Live Port\" -seconds 15`",
+      "  Evidence:",
+      "- [ ] External sender: `go run ./tools/check-midi-ports.go -send -port \"Ableton Push 2 Live Port\" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1`",
+      "  Evidence:",
+      "",
+      "## Real MidiCircuit checks",
+      "",
+      "- [ ] Port discovery",
+      "  Evidence:",
+      "- [ ] Test Note",
+      "  Evidence:",
+      "- [ ] Test CC",
+      "  Evidence:",
+      "- [ ] Test Bend",
+      "  Evidence:",
+      "- [ ] Pad interaction",
+      "  Evidence:",
+      "- [ ] Control interaction",
+      "  Evidence:",
+      "- [ ] Touch strip",
+      "  Evidence:",
+      "- [ ] Pad Sweep + Stop Sweep",
+      "  Evidence:",
+      "- [ ] CC Sweep + Stop Sweep",
+      "  Evidence:",
+      "- [ ] Panic / Reset MIDI",
+      "  Evidence:",
+      "- [ ] Persistence after restart/reload",
+      "  Evidence:",
+      "- [ ] Copy Report produces useful diagnostics",
+      "  Evidence:",
+      "",
+      "## Simulator snapshot",
+      "",
+      ...sharedReportSections(),
+      "",
+      "## Verdict",
+      "",
+      "Result: PASS / FAIL / PARTIAL",
+      "Open issues:",
+      "Accepted out-of-scope items:",
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(report);
+      toast({ title: "Verification report copied", status: "success", duration: 2200 });
+    } catch {
+      toast({ title: "Could not copy verification report", status: "error", duration: 2800 });
     }
   };
 
@@ -203,8 +274,20 @@ export default function MidiStatus() {
               {backendStatus?.mode || "unknown"}
             </Text>
           </Flex>
+          <Button
+            mt={3}
+            w="100%"
+            size="sm"
+            variant="outline"
+            color="whiteAlpha.900"
+            borderColor="whiteAlpha.300"
+            _hover={{ bg: "whiteAlpha.200" }}
+            onClick={copyVerificationReport}
+          >
+            Copy Verification Report
+          </Button>
           <Text color="whiteAlpha.500" fontSize="xs" mt={2}>
-            Use the configurable Test Note and Test CC controls to confirm note and control routing.
+            Use the configurable Test Note and Test CC controls to confirm routing. The report includes a checklist, this snapshot, and recent events.
           </Text>
         </Box>
         <Box bg="whiteAlpha.50" border="1px solid" borderColor="whiteAlpha.100" borderRadius="lg" p={3}>
