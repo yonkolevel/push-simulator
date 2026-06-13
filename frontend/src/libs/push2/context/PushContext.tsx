@@ -123,6 +123,7 @@ export type AppState = {
 };
 
 type Dispatch = (action: Action) => void;
+type HeldMidiState = Pick<AppState, 'notesPressed' | 'controlsPressed'>;
 type AppProviderProps = { children: React.ReactNode };
 const AppStateContext = createContext<AppState | undefined>(undefined);
 
@@ -693,24 +694,32 @@ export function setPadVelocity(dispatch: Dispatch, velocity: number) {
   dispatch({ type: ActionType.SET_PAD_VELOCITY, payload: { velocity: safeVelocity } });
 }
 
-export async function setMidiChannel(
-  dispatch: Dispatch,
-  channel: number,
-  heldState?: Pick<AppState, 'notesPressed' | 'controlsPressed'>
-) {
-  const safeChannel = Math.max(1, Math.min(16, Math.round(channel)));
+export function releaseHeldMidi(dispatch: Dispatch, heldState?: HeldMidiState) {
   const heldNotes = Array.from(heldState?.notesPressed ?? []);
   const heldControls = Array.from(heldState?.controlsPressed ?? []);
 
+  if (heldNotes.length === 0 && heldControls.length === 0) {
+    return false;
+  }
+
+  heldNotes.forEach((note) => SendNoteOff(note));
+  heldControls.forEach((controller) => SendCCOff(controller));
+  SendPitchBend(0);
+  dispatch({ type: ActionType.RESET_TAP_MODE });
+  dispatch({ type: ActionType.PITCH_BEND, payload: { direction: 'sent', value: 0 } });
+  return true;
+}
+
+export async function setMidiChannel(
+  dispatch: Dispatch,
+  channel: number,
+  heldState?: HeldMidiState
+) {
+  const safeChannel = Math.max(1, Math.min(16, Math.round(channel)));
+
   // Release anything held on the current backend channel before switching.
   // Otherwise a note-on can be sent on channel N and the note-off on channel M.
-  if (heldNotes.length > 0 || heldControls.length > 0) {
-    heldNotes.forEach((note) => SendNoteOff(note));
-    heldControls.forEach((controller) => SendCCOff(controller));
-    SendPitchBend(0);
-    dispatch({ type: ActionType.RESET_TAP_MODE });
-    dispatch({ type: ActionType.PITCH_BEND, payload: { direction: 'sent', value: 0 } });
-  }
+  releaseHeldMidi(dispatch, heldState);
 
   await SetChannel(safeChannel);
   writeStoredValue(STORAGE_KEYS.midiChannel, safeChannel);

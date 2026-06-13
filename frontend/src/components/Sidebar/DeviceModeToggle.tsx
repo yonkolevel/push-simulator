@@ -1,14 +1,19 @@
-import { Box, Button, ButtonGroup, Text } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { SetLiveMode, SetUserMode } from "../../../wailsjs/go/push/AbletonPush";
+import { releaseHeldMidi, useAppDispatch, useAppState } from "../../libs/push2/context/PushContext";
 
 type DeviceMode = "live" | "user";
 
 export default function DeviceModeToggle() {
+  const dispatch = useAppDispatch();
+  const { controlsPressed, notesPressed } = useAppState();
+  const toast = useToast();
   const [mode, setMode] = useState<DeviceMode>("live");
 
   const handleModeChange = async (newMode: DeviceMode) => {
     try {
+      releaseHeldMidi(dispatch, { notesPressed, controlsPressed });
       if (newMode === "live") {
         await SetLiveMode();
       } else {
@@ -17,6 +22,7 @@ export default function DeviceModeToggle() {
       setMode(newMode);
     } catch (error) {
       console.error("Failed to set device mode:", error);
+      toast({ title: "Could not switch device mode", status: "error", duration: 2800 });
     }
   };
 
@@ -47,6 +53,9 @@ export default function DeviceModeToggle() {
           User
         </Button>
       </ButtonGroup>
+      <Text color="whiteAlpha.500" fontSize="xs" mt={2}>
+        Releases held notes/controls before changing the active output port.
+      </Text>
     </Box>
   );
 }

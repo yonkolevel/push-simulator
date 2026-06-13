@@ -1,5 +1,6 @@
 import {
   panicAllOff,
+  releaseHeldMidi,
   sendCommonCCSweep,
   sendPadSweep,
   sendPitchBend,
@@ -71,6 +72,19 @@ describe('Push context MIDI helpers', () => {
     );
   });
 
+  test('releases held MIDI state before route changes', () => {
+    const released = releaseHeldMidi(dispatch, {
+      notesPressed: new Set([60 as ControlId]),
+      controlsPressed: new Set([85 as ControlId]),
+    });
+
+    expect(released).toBe(true);
+    expect(SendNoteOff).toHaveBeenCalledWith(60);
+    expect(SendCCOff).toHaveBeenCalledWith(85);
+    expect(SendPitchBend).toHaveBeenCalledWith(0);
+    expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: expect.any(Number) }));
+  });
+
   test('releases held controls before changing MIDI channel', async () => {
     await setMidiChannel(dispatch, 3, {
       notesPressed: new Set([60 as ControlId]),
@@ -90,11 +104,16 @@ describe('Push context MIDI helpers', () => {
   });
 
   test('does not send extra releases when changing channel with nothing held', async () => {
+    const released = releaseHeldMidi(dispatch, {
+      notesPressed: new Set(),
+      controlsPressed: new Set(),
+    });
     await setMidiChannel(dispatch, 4, {
       notesPressed: new Set(),
       controlsPressed: new Set(),
     });
 
+    expect(released).toBe(false);
     expect(SendNoteOff).not.toHaveBeenCalled();
     expect(SendCCOff).not.toHaveBeenCalled();
     expect(SendPitchBend).not.toHaveBeenCalled();
