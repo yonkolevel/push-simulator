@@ -128,6 +128,64 @@ RECEIVED · CC 85 · VEL 0 · CH 2
 RECEIVED · PITCH BEND · VALUE 1024 · CH 2
 ```
 
+## Verification report template
+
+Copy this block into the issue, PR, or release notes when running the real MidiCircuit pass.
+
+```markdown
+# MidiCircuit verification report
+
+Date/time:
+Tester:
+Simulator commit:
+Simulator build/run mode: wails dev / wails build app
+MidiCircuit app/version:
+MidiCircuit platform: macOS / iOS simulator / iOS device
+Connected port: Ableton Push 2 Live Port / Ableton Push 2 User Port
+
+## Automated smoke checks
+
+- [ ] Port visibility: `go run ./tools/check-midi-ports.go`
+  Evidence:
+- [ ] External listener: `go run ./tools/check-midi-ports.go -listen -port "Ableton Push 2 Live Port" -seconds 15`
+  Evidence:
+- [ ] External sender: `go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1`
+  Evidence:
+
+## Real MidiCircuit checks
+
+- [ ] Port discovery
+  Evidence:
+- [ ] Test Note
+  Evidence:
+- [ ] Test CC
+  Evidence:
+- [ ] Test Bend
+  Evidence:
+- [ ] Pad interaction
+  Evidence:
+- [ ] Control interaction
+  Evidence:
+- [ ] Touch strip
+  Evidence:
+- [ ] Pad Sweep + Stop Sweep
+  Evidence:
+- [ ] CC Sweep + Stop Sweep
+  Evidence:
+- [ ] Panic / Reset MIDI
+  Evidence:
+- [ ] Persistence after restart/reload
+  Evidence:
+- [ ] Copy Report produces useful diagnostics
+  Evidence:
+
+## Verdict
+
+Result: PASS / FAIL / PARTIAL
+Open issues:
+Accepted out-of-scope items:
+```
+
 ## Completion rule
 
 Only mark the active goal complete when every required check above passes against MidiCircuit, or when any remaining failures are explicitly accepted as out of scope.
