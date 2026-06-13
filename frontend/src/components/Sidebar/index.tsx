@@ -67,7 +67,7 @@ const PITCH_BEND_MAX = 8191;
 
 export default function Sidebar({ onClose }: SidebarProps) {
   const dispatch = useAppDispatch();
-  const { padVelocity, midiChannel, showPadLabels } = useAppState();
+  const { controlsPressed, notesPressed, padVelocity, midiChannel, showPadLabels } = useAppState();
   const [testNote, setTestNoteState] = useState(() => readStoredProbeNumber(TEST_NOTE_KEY, 60));
   const [testCC, setTestCCState] = useState(() => readStoredProbeNumber(TEST_CC_KEY, 118));
   const [testBend, setTestBendState] = useState(() =>
@@ -143,7 +143,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
         />
         <ChannelControl
           channel={midiChannel}
-          onChange={(channel) => setMidiChannel(dispatch, channel)}
+          onChange={(channel) => setMidiChannel(dispatch, channel, { notesPressed, controlsPressed })}
         />
         <PadLabelToggle
           enabled={showPadLabels}

@@ -3,13 +3,16 @@ import {
   sendCommonCCSweep,
   sendPadSweep,
   sendPitchBend,
+  setMidiChannel,
 } from './PushContext';
 import {
   SendCC,
   SendCCOff,
   SendNoteOff,
   SendPitchBend,
+  SetChannel,
 } from '../../../../wailsjs/go/push/AbletonPush';
+import { ControlId } from '../controls';
 
 const dispatch = jest.fn();
 
@@ -66,6 +69,36 @@ describe('Push context MIDI helpers', () => {
         payload: expect.objectContaining({ direction: 'sent', value: 0 }),
       })
     );
+  });
+
+  test('releases held controls before changing MIDI channel', async () => {
+    await setMidiChannel(dispatch, 3, {
+      notesPressed: new Set([60 as ControlId]),
+      controlsPressed: new Set([85 as ControlId]),
+    });
+
+    expect(SendNoteOff).toHaveBeenCalledWith(60);
+    expect(SendCCOff).toHaveBeenCalledWith(85);
+    expect(SendPitchBend).toHaveBeenCalledWith(0);
+    expect(SetChannel).toHaveBeenCalledWith(3);
+
+    const sendNoteOffMock = SendNoteOff as jest.Mock;
+    const sendCCOffMock = SendCCOff as jest.Mock;
+    const setChannelMock = SetChannel as jest.Mock;
+    expect(sendNoteOffMock.mock.invocationCallOrder[0]).toBeLessThan(setChannelMock.mock.invocationCallOrder[0]);
+    expect(sendCCOffMock.mock.invocationCallOrder[0]).toBeLessThan(setChannelMock.mock.invocationCallOrder[0]);
+  });
+
+  test('does not send extra releases when changing channel with nothing held', async () => {
+    await setMidiChannel(dispatch, 4, {
+      notesPressed: new Set(),
+      controlsPressed: new Set(),
+    });
+
+    expect(SendNoteOff).not.toHaveBeenCalled();
+    expect(SendCCOff).not.toHaveBeenCalled();
+    expect(SendPitchBend).not.toHaveBeenCalled();
+    expect(SetChannel).toHaveBeenCalledWith(4);
   });
 
   test('does not start pad sweep when already cancelled', async () => {
