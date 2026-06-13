@@ -34,6 +34,8 @@ export default function MidiStatus() {
   const activeControls = controlsPressed.size;
   const sentEvents = midiEvents.filter((event) => event.direction === "sent").length;
   const receivedEvents = midiEvents.filter((event) => event.direction === "received").length;
+  const lastSentEvent = midiEvents.find((event) => event.direction === "sent");
+  const lastReceivedEvent = midiEvents.find((event) => event.direction === "received");
   const [backendStatus, setBackendStatus] = useState<BackendMIDIStatus | null>(null);
 
   useEffect(() => {
@@ -92,6 +94,8 @@ export default function MidiStatus() {
     `- Active notes: ${activeNotes}${activeNotes ? ` (${Array.from(notesPressed).join(", ")})` : ""}`,
     `- Active controls: ${activeControls}${activeControls ? ` (${Array.from(controlsPressed).join(", ")})` : ""}`,
     `- Last message: ${eventLabel(lastMidiEvent)}`,
+    `- Last sent: ${eventLabel(lastSentEvent)}`,
+    `- Last received: ${eventLabel(lastReceivedEvent)}`,
     `- Selected control: ${selectedControl ? `${selectedControl.name} (${selectedControl.type.toUpperCase()} ${selectedControl.id})` : "none"}`,
     "",
     "Recent events",
@@ -258,6 +262,24 @@ export default function MidiStatus() {
           <Text color="white" fontSize="sm" fontFamily="mono" textTransform="uppercase">
             {eventLabel(lastMidiEvent)}
           </Text>
+          <Flex direction="column" gap={1.5} mt={3}>
+            <Box>
+              <Text color="whiteAlpha.500" fontSize="xs">
+                Last sent
+              </Text>
+              <Text color="teal.100" fontSize="xs" fontFamily="mono" textTransform="uppercase">
+                {eventLabel(lastSentEvent)}
+              </Text>
+            </Box>
+            <Box>
+              <Text color="whiteAlpha.500" fontSize="xs">
+                Last received
+              </Text>
+              <Text color="purple.100" fontSize="xs" fontFamily="mono" textTransform="uppercase">
+                {eventLabel(lastReceivedEvent)}
+              </Text>
+            </Box>
+          </Flex>
         </Box>
         <Box bg="whiteAlpha.100" border="1px solid" borderColor="whiteAlpha.100" borderRadius="lg" p={3}>
           <Text color="whiteAlpha.600" fontSize="xs" mb={1}>
