@@ -10,7 +10,7 @@ type MIDIStatus struct {
 }
 
 func (ap *AbletonPush) GetMIDIStatus() MIDIStatus {
-	ready := ap.Driver != nil && ap.LivePortIn != nil && ap.LivePortOut != nil && ap.UserPortIn != nil && ap.UserPortOut != nil
+	ready := ap.Driver != nil && ap.LivePortIn != nil && ap.LivePortOut != nil && ap.UserPortIn != nil && ap.UserPortOut != nil && ap.LivePortWriter != nil && ap.UserPortWriter != nil
 
 	return MIDIStatus{
 		Ready:    ready,

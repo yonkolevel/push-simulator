@@ -6,12 +6,25 @@ import (
 	"gitlab.com/gomidi/midi/writer"
 )
 
-func (p *AbletonPush) activeWriter() writer.ChannelWriter {
-	if p.Mode == User && p.UserPortWriter != nil {
-		return p.UserPortWriter
+func (p *AbletonPush) activeWriter() (writer.ChannelWriter, error) {
+	if p.Mode == User {
+		if p.UserPortWriter == nil {
+			return nil, fmt.Errorf("MIDI writer is not ready: %s is unavailable", Push2UserPort)
+		}
+		return p.UserPortWriter, nil
 	}
 
-	return p.LivePortWriter
+	if p.LivePortWriter == nil {
+		return nil, fmt.Errorf("MIDI writer is not ready: %s is unavailable", Push2LivePort)
+	}
+	return p.LivePortWriter, nil
+}
+
+func (p *AbletonPush) liveWriter() (writer.ChannelWriter, error) {
+	if p.LivePortWriter == nil {
+		return nil, fmt.Errorf("MIDI writer is not ready: %s is unavailable", Push2LivePort)
+	}
+	return p.LivePortWriter, nil
 }
 
 // SetChannel selects the outgoing MIDI channel, using the human-facing 1-16 range.
@@ -41,32 +54,56 @@ func (p *AbletonPush) GetChannel() uint8 {
 
 // SendCCOn sends a MIDI CC on message.
 func (p *AbletonPush) SendCCOn(controller uint8) error {
-	return writer.CcOn(p.activeWriter(), controller)
+	wr, err := p.activeWriter()
+	if err != nil {
+		return err
+	}
+	return writer.CcOn(wr, controller)
 }
 
 // SendCC sends a MIDI CC message.
 func (p *AbletonPush) SendCC(controller, value uint8) error {
-	return writer.ControlChange(p.activeWriter(), controller, value)
+	wr, err := p.activeWriter()
+	if err != nil {
+		return err
+	}
+	return writer.ControlChange(wr, controller, value)
 }
 
 // SendNoteOn sends a MIDI note-on message.
 func (p *AbletonPush) SendNoteOn(note, velocity uint8) error {
-	return writer.NoteOn(p.activeWriter(), note, velocity)
+	wr, err := p.activeWriter()
+	if err != nil {
+		return err
+	}
+	return writer.NoteOn(wr, note, velocity)
 }
 
 // SendNoteOff sends a MIDI note-off message.
 func (p *AbletonPush) SendNoteOff(note uint8) error {
-	return writer.NoteOff(p.activeWriter(), note)
+	wr, err := p.activeWriter()
+	if err != nil {
+		return err
+	}
+	return writer.NoteOff(wr, note)
 }
 
 // SendCCOff sends a MIDI CC off message.
 func (p *AbletonPush) SendCCOff(controller uint8) error {
-	return writer.CcOff(p.activeWriter(), controller)
+	wr, err := p.activeWriter()
+	if err != nil {
+		return err
+	}
+	return writer.CcOff(wr, controller)
 }
 
 // SendPitchBend sends a pitch-bend message.
 func (p *AbletonPush) SendPitchBend(value int16) error {
-	return writer.Pitchbend(p.activeWriter(), value)
+	wr, err := p.activeWriter()
+	if err != nil {
+		return err
+	}
+	return writer.Pitchbend(wr, value)
 }
 
 // RTStart writes the start realtime message.

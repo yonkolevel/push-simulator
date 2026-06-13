@@ -169,9 +169,12 @@ func (ap *AbletonPush) SetScaleMode(mode ScaleMode) {
 }
 
 func (ap *AbletonPush) SetUserMode() error {
-	err := writer.SysEx(ap.LivePortWriter, SET_USER_MODE_MSG)
-
+	wr, err := ap.liveWriter()
 	if err != nil {
+		return err
+	}
+
+	if err := writer.SysEx(wr, SET_USER_MODE_MSG); err != nil {
 		return err
 	}
 
@@ -181,9 +184,12 @@ func (ap *AbletonPush) SetUserMode() error {
 }
 
 func (ap *AbletonPush) SetLiveMode() error {
-	err := writer.SysEx(ap.LivePortWriter, SET_LIVE_MODE_MSG)
-
+	wr, err := ap.liveWriter()
 	if err != nil {
+		return err
+	}
+
+	if err := writer.SysEx(wr, SET_LIVE_MODE_MSG); err != nil {
 		return err
 	}
 

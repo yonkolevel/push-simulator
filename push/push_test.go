@@ -1,6 +1,7 @@
 package push
 
 import (
+	"strings"
 	"testing"
 
 	"gitlab.com/gomidi/midi"
@@ -106,12 +107,48 @@ func TestActiveWriterUsesUserWriterOnlyInUserMode(t *testing.T) {
 	userWriter := &fakeChannelWriter{}
 	ap := &AbletonPush{LivePortWriter: liveWriter, UserPortWriter: userWriter}
 
-	if got := ap.activeWriter(); got != liveWriter {
+	got, err := ap.activeWriter()
+	if err != nil {
+		t.Fatalf("expected live writer by default: %v", err)
+	}
+	if got != liveWriter {
 		t.Fatal("expected live writer by default")
 	}
 
 	ap.Mode = User
-	if got := ap.activeWriter(); got != userWriter {
+	got, err = ap.activeWriter()
+	if err != nil {
+		t.Fatalf("expected user writer in user mode: %v", err)
+	}
+	if got != userWriter {
 		t.Fatal("expected user writer in user mode")
+	}
+}
+
+func TestSendMethodsReturnUsefulErrorWhenWriterMissing(t *testing.T) {
+	ap := &AbletonPush{}
+
+	err := ap.SendNoteOn(60, 100)
+	if err == nil {
+		t.Fatal("expected missing writer error")
+	}
+	if !strings.Contains(err.Error(), Push2LivePort) {
+		t.Fatalf("expected error to name live port, got %v", err)
+	}
+}
+
+func TestUserModeRequiresUserWriter(t *testing.T) {
+	liveWriter := &fakeChannelWriter{}
+	ap := &AbletonPush{Mode: User, LivePortWriter: liveWriter}
+
+	err := ap.SendCCOn(85)
+	if err == nil {
+		t.Fatal("expected missing user writer error")
+	}
+	if !strings.Contains(err.Error(), Push2UserPort) {
+		t.Fatalf("expected error to name user port, got %v", err)
+	}
+	if len(liveWriter.writes) != 0 {
+		t.Fatal("expected user mode not to fall back to live writer")
 	}
 }
