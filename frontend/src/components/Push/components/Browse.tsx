@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgBrowse = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="browse">
+  <Control {...props} id="browse" name="browse" type={ControlType.CC} controlId={ControlId.BROWSE}>
     <path
       id="Vector_303"
       d="M373.39 99.38h20.19V79.19h-20.19v20.19z"
@@ -37,7 +39,7 @@ const SvgBrowse = (props: React.SVGProps<SVGSVGElement>) => (
       d="M386 84.08h-1.25a.53.53 0 00.14.34.408.408 0 00.32.13.491.491 0 00.25-.07c.087-.078.161-.17.22-.27l.34.19a1.052 1.052 0 01-.17.23.702.702 0 01-.19.16.778.778 0 01-.21.09c-.086.01-.174.01-.26 0a.791.791 0 01-.62-.25 1.068 1.068 0 010-1.34.793.793 0 01.61-.26.763.763 0 01.61.25c.152.19.23.427.22.67l-.01.13zm-.41-.33a.381.381 0 00-.41-.32.34.34 0 00-.14 0 .382.382 0 00-.11.06.944.944 0 00-.1.1.547.547 0 000 .14l.76.02z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgBrowse;

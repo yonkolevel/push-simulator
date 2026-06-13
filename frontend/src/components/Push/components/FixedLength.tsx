@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgFixedLength = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="fixed-length">
+  <Control {...props} id="fixed-length" name="fixedlength" type={ControlType.CC} controlId={ControlId.FIXED_LENGTH}>
     <path
       id="Vector_234"
       d="M28.18 243.46H7.99v19.07h20.19v-19.07z"
@@ -62,7 +64,7 @@ const SvgFixedLength = (props: React.SVGProps<SVGSVGElement>) => (
       d="M19.19 252.27h.4v1.42a.753.753 0 01.48-.19.605.605 0 01.47.19.79.79 0 01.15.54v1.07h-.4v-1a.47.47 0 00-.08-.3.303.303 0 00-.24-.09.296.296 0 00-.29.13.819.819 0 00-.09.45v.85h-.4v-3.07z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgFixedLength;

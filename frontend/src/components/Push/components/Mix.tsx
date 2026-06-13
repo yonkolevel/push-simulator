@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgMix = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="mix">
+  <Control {...props} id="mix" name="mix" type={ControlType.CC} controlId={ControlId.MIX}>
     <path
       id="Vector_315"
       d="M393.93 78.57h20.19V58.38h-20.19v20.19z"
@@ -22,7 +24,7 @@ const SvgMix = (props: React.SVGProps<SVGSVGElement>) => (
       d="M400.51 62.66l-.62-.8h.48l.39.51.39-.51h.5l-.65.8.75 1h-.48l-.51-.65-.53.65h-.49l.77-1z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgMix;

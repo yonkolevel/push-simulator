@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgConvert = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="convert">
+  <Control {...props} id="convert" name="convert" type={ControlType.CC} controlId={ControlId.CONVERT}>
     <path
       id="Vector_192"
       d="M28.18 135.96H7.99v20.19h20.19v-20.19z"
@@ -42,7 +44,7 @@ const SvgConvert = (props: React.SVGProps<SVGSVGElement>) => (
       d="M22.85 139.62V141h-.4v-1.37h-.17v-.38h.17v-.64h.4v.64h.32v.38l-.32-.01z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgConvert;

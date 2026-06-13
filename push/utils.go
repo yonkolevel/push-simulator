@@ -82,8 +82,8 @@ func getNoteOctave(row int, col int) Note {
 func createNotePads() NotePads {
 	var notePads = make(NotePads)
 
-	for col := 1; col <= 10; col++ {
-		for row := 1; row <= 10; row++ {
+	for row := 0; row < NumRows; row++ {
+		for col := 0; col < NumCols; col++ {
 			note := getNoteOctave(row, col)
 			key := padKey(note.note, note.octave)
 
@@ -95,7 +95,7 @@ func createNotePads() NotePads {
 			p := Pad{
 				Row: row,
 				Col: col,
-				Pad: (PadStartVal + col + row*NumRows),
+				Pad: PadStartVal + col + row*NumRows,
 			}
 
 			pads = append(pads, p)
@@ -122,7 +122,7 @@ func sortNotesToScale(notes []Note) []Note {
 			return false
 		}
 
-		if notes[b].octave > notes[b].octave {
+		if notes[a].octave > notes[b].octave {
 			return true
 		}
 

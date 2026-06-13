@@ -1,23 +1,16 @@
 import * as React from 'react';
-import { Colors } from '../../../libs/push2/colors';
-import { ControlId } from '../../../libs/push2/controls';
-import { useToggleControl } from '../../../libs/push2/react/hooks';
+import { ControlId, ControlType } from '../../../libs/push2/controls';
+import Control from '../Control';
+
 
 const SvgPageLeft = (props: React.SVGProps<SVGSVGElement>) => {
-  const { isOn, toggleControl } = useToggleControl(ControlId.PAGE_LEFT);
-  const [mouseDown, setMouseDown] = React.useState(false);
   return (
-    <g
+    <Control
+      {...props}
       id='page-left'
-      onMouseDown={() => {
-        setMouseDown(true);
-        toggleControl();
-      }}
-      onMouseUp={() => {
-        setMouseDown(false);
-        toggleControl();
-      }}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
+      name='page-left'
+      type={ControlType.CC}
+      controlId={ControlId.PAGE_LEFT}
     >
       <path
         // style={{ opacity: mouseDown ? 0.8 : 1 }}
@@ -29,9 +22,9 @@ const SvgPageLeft = (props: React.SVGProps<SVGSVGElement>) => {
       <path
         id='Vector_388'
         d='M388 293.56l-2.89-2.9v.89l2.76-2.76c.57-.57-.32-1.46-.88-.89l-2.77 2.76a.652.652 0 000 .89l2.89 2.89c.57.57 1.46-.32.89-.88z'
-        fill={isOn ? Colors.Green : '#fff'}
+        fill='#fff'
       />
-    </g>
+    </Control>
   );
 };
 

@@ -1,43 +1,15 @@
 import * as React from "react";
-import { ControlId } from "../../../libs/push2/controls";
-import { useToggleControl } from "../../../libs/push2/react/hooks";
-import { useMomentaRyPress } from "../../../libs/push2/react/hooks/ui";
-import { ButtonColor } from "../../../libs/push2/types";
-import { SendCCOff, SendCCOn } from "../../../../wailsjs/go/push/AbletonPush";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgMetronome = (props: React.SVGProps<SVGSVGElement>) => {
-  const ref = React.useRef<SVGGElement>(null);
-
-  useMomentaRyPress(ref.current);
-
-  const [mouseDown, setMouseDown] = React.useState(false);
-
-  const { isOn, toggleControl } = useToggleControl(
-    ControlId.METRO_NOME,
-    "one-way",
-    ButtonColor.WHITE
-  );
-
-  React.useEffect(() => {
-    toggleControl();
-  }, []);
-
-  const handleMouseDown = React.useCallback(() => {
-    setMouseDown(true);
-    SendCCOn(ControlId.METRO_NOME);
-  }, [window]);
-
-  const handleMouseUp = React.useCallback(() => {
-    setMouseDown(false);
-    SendCCOff(ControlId.METRO_NOME);
-  }, [window]);
-
   return (
-    <g
+    <Control
+      {...props}
       id="metronome"
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
+      name="metronome"
+      type={ControlType.CC}
+      controlId={ControlId.METRO_NOME}
     >
       <path
         id="Vector_165"
@@ -89,7 +61,7 @@ const SvgMetronome = (props: React.SVGProps<SVGSVGElement>) => {
         d="M58.1 37.56h-1.25a.477.477 0 00.14.34.45.45 0 00.56.06.929.929 0 00.22-.27l.34.19a1 1 0 01-.16.23.7.7 0 01-.19.16.847.847 0 01-.22.09.996.996 0 01-.25 0 .819.819 0 01-.63-.25.93.93 0 01-.24-.67 1 1 0 01.23-.67.87.87 0 011.23 0 1 1 0 01.22.68v.11zm-.42-.33a.38.38 0 00-.4-.32h-.14L57 37l-.09.11a.52.52 0 00-.06.13l.83-.01z"
         fill="#fff"
       />
-    </g>
+    </Control>
   );
 };
 

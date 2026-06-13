@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgQuantize = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="quantize">
+  <Control {...props} id="quantize" name="quantize" type={ControlType.CC} controlId={ControlId.QUANTIZE}>
     <path
       id="Vector_211"
       d="M28.18 177.59H7.99v20.19h20.19v-20.19z"
@@ -47,7 +49,7 @@ const SvgQuantize = (props: React.SVGProps<SVGSVGElement>) => (
       d="M25.39 180.64h-1.26a.56.56 0 00.14.35.434.434 0 00.32.12.411.411 0 00.25-.07c.087-.078.161-.169.22-.27l.34.19a1.068 1.068 0 01-.17.23.665.665 0 01-.18.16.872.872 0 01-.22.09c-.083.01-.167.01-.25 0a.817.817 0 01-.63-.25.93.93 0 01-.24-.67 1 1 0 01.23-.67.791.791 0 01.61-.26.802.802 0 01.61.25 1 1 0 01.23.68v.12zm-.42-.33a.39.39 0 00-.41-.32h-.14a.403.403 0 00-.11.07.219.219 0 00-.09.1.312.312 0 00-.06.13l.81.02z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgQuantize;

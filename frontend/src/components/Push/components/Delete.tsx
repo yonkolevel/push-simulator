@@ -1,21 +1,24 @@
 import * as React from "react";
-import { Colors, pushColorToHexMap } from "../../../libs/push2/colors";
-import {
-  padDown,
-  padUp,
-  useAppDispatch,
-  useAppState
-} from "../../../libs/push2/context/PushContext";
-import { ControlId, controls, ControlType } from "../../../libs/push2/controls";
+import { pushColorToHexMap } from "../../../libs/push2/colors";
+import { useAppState } from "../../../libs/push2/context/PushContext";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
 import Control from "../Control";
 
 const SvgDelete = (props: React.SVGProps<SVGSVGElement>) => {
   const { controlsState } = useAppState();
   const controlState = controlsState.get(ControlId.DELETE);
-  const color = pushColorToHexMap[controlState?.velocity || 0];
+  const color = controlState?.velocity
+    ? pushColorToHexMap[controlState.velocity] || "#fff"
+    : "#fff";
 
   return (
-    <Control name="Delete" controlId={ControlId.DELETE} type={ControlType.CC}>
+    <Control
+      {...props}
+      id="delete"
+      name="delete"
+      controlId={ControlId.DELETE}
+      type={ControlType.CC}
+    >
       <path id="Vector_175" d="M28.27 58.33H8.08v20.19h20.19V58.33z" />
       <path
         id="Vector_176"

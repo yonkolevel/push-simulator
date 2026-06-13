@@ -1,16 +1,11 @@
 import * as React from "react";
-import { pushColorToHexMap } from "../../../libs/push2/colors";
-import { useAppState } from "../../../libs/push2/context/PushContext";
 import { ControlId, ControlType } from "../../../libs/push2/controls";
 import Control from "../Control";
 
 const SvgSolo = (props: React.SVGProps<SVGSVGElement>) => {
-  const { controlsState } = useAppState();
-  const controlState = controlsState.get(ControlId.DELETE);
-  const color = pushColorToHexMap[controlState?.velocity || 0];
-
   return (
     <Control
+      {...props}
       id="solo"
       name="solo"
       type={ControlType.CC}

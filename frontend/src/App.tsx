@@ -5,8 +5,6 @@ import Push from "./components/Push";
 import Sidebar from "./components/Sidebar";
 import { AppProvider } from "./libs/push2/context/PushContext";
 
-const BG_COLOR = "#1B2636";
-
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -16,40 +14,40 @@ function App() {
         id="app"
         h="100vh"
         w="100vw"
-        bg={BG_COLOR}
+        bg="radial-gradient(circle at 35% 25%, #253246 0%, #172232 45%, #101722 100%)"
         overflow="hidden"
         position="relative"
       >
-        {/* Main area - Push simulator */}
         <Flex
           flex={1}
           align="center"
           justify="center"
           overflow="hidden"
-          p={4}
+          px={{ base: 3, md: 8 }}
+          py={{ base: 4, md: 8 }}
         >
           <Push />
         </Flex>
 
-        {/* Sidebar toggle button (visible when sidebar closed) */}
         {!sidebarOpen && (
           <IconButton
             aria-label="Open settings"
             icon={<ChevronLeftIcon />}
             position="fixed"
-            right="8px"
+            right="10px"
             top="50%"
             transform="translateY(-50%)"
             onClick={() => setSidebarOpen(true)}
             bg="whiteAlpha.200"
             color="white"
+            border="1px solid"
+            borderColor="whiteAlpha.300"
             _hover={{ bg: "whiteAlpha.300" }}
             size="sm"
             zIndex={10}
           />
         )}
 
-        {/* Sidebar */}
         {sidebarOpen && <Sidebar onClose={() => setSidebarOpen(false)} />}
       </Flex>
     </AppProvider>

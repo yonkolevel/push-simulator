@@ -33,7 +33,7 @@ export enum Colors {
 }
 
 export const pushColorToHexMap: { [key: number]: string } = {
-  0: Colors.Gray,
+  0: "#242625",
   9: Colors.Orange,
   15: Colors.LightGreen,
   16: Colors.Teal,
@@ -42,7 +42,7 @@ export const pushColorToHexMap: { [key: number]: string } = {
   126: Colors.Green,
   127: Colors.Red,
   122: Colors.Gray,
-  123: "gray",
+  123: "#3C3C3B",
   7: Colors.LightRed,
   20: Colors.LightPurple,
   8: Colors.LightOrange

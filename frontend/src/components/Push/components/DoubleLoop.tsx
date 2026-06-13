@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgDoubleLoop = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="double-loop">
+  <Control {...props} id="double-loop" name="doubleloop" type={ControlType.CC} controlId={ControlId.DOUBLE_LOOP}>
     <path
       id="Vector_200"
       d="M28.18 156.77H7.99v20.19h20.19v-20.19z"
@@ -53,7 +55,7 @@ const SvgDoubleLoop = (props: React.SVGProps<SVGSVGElement>) => (
       d="M16.68 166.2h-.4v-2.7h.4v.19a.752.752 0 01.54-.24.754.754 0 01.6.27.999.999 0 010 1.32.761.761 0 01-.59.26.747.747 0 01-.55-.25v1.15zm1-1.81a.59.59 0 00-.13-.41.436.436 0 00-.35-.16.457.457 0 00-.36.15.6.6 0 00-.14.41.59.59 0 00.14.4.441.441 0 00.36.16.413.413 0 00.34-.16.54.54 0 00.1-.39h.04z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgDoubleLoop;

@@ -11,11 +11,6 @@ const SvgNote = (props: React.SVGProps<SVGSVGElement>) => {
       controlId={ControlId.NOTE}
     >
       <path
-        id="Vector_347"
-        d="M393.31 245.82v-12.18h-20.19v12.18h20.19z"
-        fill="#3C3C3B"
-      />
-      <path
         id="Vector_348"
         d="M393.31 265.33v-20.19h-20.19v20.19h20.19z"
         fill="#3C3C3B"

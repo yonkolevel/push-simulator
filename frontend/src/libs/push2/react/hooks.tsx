@@ -9,27 +9,16 @@ export const useToggleControl = (
   mode: "one-way" | "2-ways" = "2-ways",
   color: ButtonColor = ButtonColor.WHITE
 ) => {
-  if (typeof window === "undefined" || typeof window.backend === "undefined") {
-    // throw new Error("window.backend global is not available.");
-    return { isOn: false, toggleControl: () => {} };
-  }
-
   const [isOn, setIsOn] = React.useState(false);
 
   const toggleControl = () => {
     setIsOn((v) => {
       if (!v) {
-        SendCC(controlId, color).then((err: any) => {
-          console.log(err);
-        });
+        SendCC(controlId, color);
       }
 
       if (v) {
-        SendCCOff(controlId).then((err: any) => {
-          if (!err) {
-            console.log(err);
-          }
-        });
+        SendCCOff(controlId);
       }
 
       return !v;
@@ -42,12 +31,7 @@ export const useToggleControl = (
         return;
       }
 
-      if (!isOn && value === 127) {
-        console.log("is not on and value 127");
-        toggleControl();
-      } else if (isOn && value === 127) {
-        console.log("is on so...");
-        console.log("set is off");
+      if (value === 127) {
         toggleControl();
       }
     });
@@ -70,12 +54,10 @@ export const useDeviceNoteState = () => {
 
   React.useEffect(() => {
     EventsOn("note_on", (note: number) => {
-      console.log("note on message", note);
       updateMap(note, { isOn: true });
     });
 
     EventsOn("note_off", (note: number) => {
-      console.log("note off message", note);
       updateMap(note, { isOn: false });
     });
 

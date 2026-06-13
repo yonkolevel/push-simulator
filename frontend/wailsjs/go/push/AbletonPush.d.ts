@@ -5,6 +5,10 @@ import {context} from '../models';
 
 export function CloseSession():Promise<void>;
 
+export function GetChannel():Promise<number>;
+
+export function GetMIDIStatus():Promise<push.MIDIStatus>;
+
 export function GetNotePads():Promise<push.NotePads>;
 
 export function PadDown(arg1:push.Note):Promise<void>;
@@ -24,6 +28,8 @@ export function SendNoteOff(arg1:number):Promise<void>;
 export function SendNoteOn(arg1:number,arg2:number):Promise<void>;
 
 export function SendPitchBend(arg1:number):Promise<void>;
+
+export function SetChannel(arg1:number):Promise<void>;
 
 export function SetLiveMode():Promise<void>;
 
