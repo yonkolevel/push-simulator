@@ -29,6 +29,12 @@ Use this checklist before marking the simulator usability goal complete. The app
    go run ./tools/check-midi-ports.go -listen -port "Ableton Push 2 Live Port" -seconds 15
    ```
 
+   Optional: send note, CC, and pitch-bend messages into the simulator from a separate process and confirm the simulator event history shows received messages.
+
+   ```bash
+   go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1
+   ```
+
 3. Open MidiCircuit and connect to one simulator port:
 
    - `Ableton Push 2 Live Port`
@@ -42,6 +48,7 @@ Record evidence for each row. Screenshots, copied MIDI event logs, or copied deb
 | --- | --- | --- | --- |
 | Port discovery | MidiCircuit shows `Ableton Push 2 Live Port` and/or `Ableton Push 2 User Port` as connectable MIDI devices. |  |  |
 | External listener | `go run ./tools/check-midi-ports.go -listen ...` captures note, CC, and pitch-bend events from the simulator port. |  |  |
+| External sender | `go run ./tools/check-midi-ports.go -send ...` sends note, CC, and pitch-bend into the simulator and the simulator event history shows received messages. |  |  |
 | Test Note | Simulator **Test Note** arrives in MidiCircuit with the selected note, velocity, and channel. |  |  |
 | Test CC | Simulator **Test CC** arrives in MidiCircuit with the selected controller and channel. |  |  |
 | Test Bend | Simulator **Test Bend** arrives in MidiCircuit as pitch bend, including center value `0`. |  |  |
@@ -56,7 +63,7 @@ Record evidence for each row. Screenshots, copied MIDI event logs, or copied deb
 
 ## Local smoke evidence
 
-These checks prove the simulator's virtual ports and emitted MIDI messages are visible to another process. They do **not** replace the real MidiCircuit checks above.
+These checks prove the simulator's virtual ports, emitted MIDI messages, and received MIDI messages are visible to another process. They do **not** replace the real MidiCircuit checks above.
 
 Last local smoke run: `2026-06-14 01:04:33 JST`
 
@@ -89,6 +96,36 @@ IN cc controller=0 value=127 channel=1
 IN cc controller=0 value=0 channel=1
 IN pitch_bend value=0 channel=1
 Done listening.
+```
+
+Inbound command:
+
+```bash
+go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 101 -cc 85 -bend 1024 -channel 2
+```
+
+Observed output:
+
+```text
+MIDI inputs:
+- Ableton Push 2 Live Port
+- Ableton Push 2 User Port
+MIDI outputs:
+- Ableton Push 2 Live Port
+- Ableton Push 2 User Port
+OK: Ableton Push 2 Live/User virtual ports are visible as both inputs and outputs.
+Sending smoke sequence to "Ableton Push 2 Live Port" on channel 2.
+OK: sent note=36 velocity=101 cc=85 bend=1024 channel=2.
+```
+
+Simulator UI evidence after inbound command:
+
+```text
+RECEIVED · NOTE ON 36 · VEL 101 · CH 2
+RECEIVED · NOTE OFF 36 · VEL 0 · CH 2
+RECEIVED · CC 85 · VEL 127 · CH 2
+RECEIVED · CC 85 · VEL 0 · CH 2
+RECEIVED · PITCH BEND · VALUE 1024 · CH 2
 ```
 
 ## Completion rule

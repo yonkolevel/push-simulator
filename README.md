@@ -136,6 +136,12 @@ To capture outgoing simulator events without another app, add `-listen` and then
 go run ./tools/check-midi-ports.go -listen -port "Ableton Push 2 Live Port" -seconds 15
 ```
 
+To verify the simulator receives MIDI from an external process, add `-send` and check the simulator event history for received note, CC, and pitch-bend messages:
+
+```bash
+go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1
+```
+
 ### Validation
 
 ```bash
