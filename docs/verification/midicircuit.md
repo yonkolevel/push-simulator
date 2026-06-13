@@ -42,7 +42,7 @@ Use this checklist before marking the simulator usability goal complete. The app
 
 ## Required pass/fail checks
 
-Record evidence for each row. Screenshots, copied MIDI event logs, or copied debug reports are all acceptable.
+Record evidence for each row. Screenshots, copied MIDI event logs, copied debug reports, or the in-app **Copy Verification Report** output are all acceptable.
 
 | Check | Expected result | Pass? | Evidence / notes |
 | --- | --- | --- | --- |
@@ -60,6 +60,7 @@ Record evidence for each row. Screenshots, copied MIDI event logs, or copied deb
 | Panic / Reset MIDI | Panic releases stuck notes/controls in MidiCircuit and centers pitch bend. |  |  |
 | Persistence | Restart/reload preserves pad velocity, MIDI channel, pad labels, Test Note, Test CC, and Test Bend. |  |  |
 | Debug evidence | **Copy Report** includes ports, channel, selected control, active state, and recent events useful for troubleshooting. |  |  |
+| Verification report | **Copy Verification Report** copies a checklist report seeded with ports, channel, selected control, active state, and recent events. |  |  |
 
 ## Local smoke evidence
 
@@ -130,7 +131,7 @@ RECEIVED · PITCH BEND · VALUE 1024 · CH 2
 
 ## Verification report template
 
-Copy this block into the issue, PR, or release notes when running the real MidiCircuit pass.
+Use **Copy Verification Report** in the simulator's MIDI Status panel to generate this with the current simulator snapshot and recent events pre-filled. If the simulator is unavailable, copy this block into the issue, PR, or release notes when running the real MidiCircuit pass.
 
 ```markdown
 # MidiCircuit verification report
@@ -177,6 +178,8 @@ Connected port: Ableton Push 2 Live Port / Ableton Push 2 User Port
 - [ ] Persistence after restart/reload
   Evidence:
 - [ ] Copy Report produces useful diagnostics
+  Evidence:
+- [ ] Copy Verification Report includes current simulator snapshot and recent events
   Evidence:
 
 ## Verdict

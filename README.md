@@ -52,6 +52,8 @@ Use this when you want to:
 
 6. If routing still looks wrong, use **Copy Report** in MIDI Status. It includes port names, backend status, channel, selected control, active notes/controls, and recent MIDI events.
 
+7. When doing a real MidiCircuit pass, use **Copy Verification Report** in MIDI Status. It copies a checklist report seeded with the current ports, channel, active state, selected control, and recent events so you can paste evidence into an issue, PR, or release note.
+
 Before considering a release ready, run the manual checklist in [`docs/verification/midicircuit.md`](docs/verification/midicircuit.md) against the real MidiCircuit app.
 
 ## Useful MIDI map
