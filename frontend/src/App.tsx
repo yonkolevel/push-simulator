@@ -4,6 +4,7 @@ import "./App.css";
 import Push from "./components/Push";
 import Sidebar from "./components/Sidebar";
 import { AppProvider } from "./libs/push2/context/PushContext";
+import { PushPalette } from "./libs/push2/colors";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -14,7 +15,7 @@ function App() {
         id="app"
         h="100vh"
         w="100vw"
-        bg="radial-gradient(circle at 35% 25%, #253246 0%, #172232 45%, #101722 100%)"
+        bg={`radial-gradient(circle at 35% 22%, ${PushPalette.pageGlow} 0%, #10100e 42%, ${PushPalette.page} 100%)`}
         overflow="hidden"
         position="relative"
       >

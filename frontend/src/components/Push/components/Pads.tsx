@@ -1,15 +1,15 @@
 import { range } from 'lodash';
 import React from 'react';
-import { Colors, pushColorToHexMap } from '../../../libs/push2/colors';
+import { Colors, PushPalette, pushColorToHexMap } from '../../../libs/push2/colors';
 import { useAppState } from '../../../libs/push2/context/PushContext';
 import { ControlType } from '../../../libs/push2/controls';
 import { getNoteOctave, inScale, isRootNote, Mode } from '../../../libs/push2/core';
 import Control from '../Control';
 
-const UNLIT_PAD = '#242625';
-const IN_SCALE_PAD = '#293331';
-const ROOT_PAD = '#244239';
-const STROKE = '#111312';
+const UNLIT_PAD = '#1F201E';
+const IN_SCALE_PAD = '#2A2B27';
+const ROOT_PAD = '#3A3320';
+const STROKE = '#0B0B0A';
 
 const Pad: React.FunctionComponent<{
   id: string;
@@ -35,15 +35,15 @@ const Pad: React.FunctionComponent<{
         fill={color}
         y={isActive ? y + 0.6 : y}
         x={x}
-        stroke={isActive ? '#9fffee' : STROKE}
+        stroke={isActive ? PushPalette.accent : STROKE}
         strokeWidth={isActive ? 0.85 : 0.45}
-        filter={isActive ? 'drop-shadow(0 0 3px rgba(0, 210, 190, 0.65))' : undefined}
+        filter={isActive ? 'drop-shadow(0 0 3px rgba(255, 212, 38, 0.58))' : undefined}
       />
       <text
         x={x + width / 2}
         y={y + height / 2 + 1.8}
         textAnchor="middle"
-        fill={isActive ? '#dffff9' : '#74807b'}
+        fill={isActive ? '#fff7c7' : PushPalette.labelMuted}
         fontSize="4.2"
         fontFamily="monospace"
         opacity={isActive ? 0.95 : 0.42}
@@ -57,7 +57,7 @@ const Pad: React.FunctionComponent<{
 
 const resolvePadColor = (pad: number, velocity: number | undefined, isPressed: boolean) => {
   if (isPressed) {
-    return Colors.Teal;
+    return Colors.Yellow;
   }
 
   if (velocity && velocity > 0) {

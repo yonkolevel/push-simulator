@@ -96,13 +96,13 @@ export default function Sidebar({ onClose }: SidebarProps) {
     <Box
       w="320px"
       minW="320px"
-      bg="rgba(12, 18, 28, 0.82)"
+      bg="rgba(17, 17, 15, 0.9)"
       backdropFilter="blur(18px)"
       borderLeft="1px solid"
       borderColor="whiteAlpha.200"
       p={5}
       overflowY="auto"
-      boxShadow="-18px 0 40px rgba(0, 0, 0, 0.18)"
+      boxShadow="-18px 0 40px rgba(0, 0, 0, 0.42)"
     >
       <Flex justify="space-between" align="center" mb={4}>
         <Box textAlign="left">
@@ -129,7 +129,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       <VStack align="stretch" spacing={6}>
         <MidiStatus />
         <Divider borderColor="whiteAlpha.200" />
-        <MidiCircuitChecklist />
+        <ExternalMidiChecklist />
         <Divider borderColor="whiteAlpha.200" />
         <DeviceModeToggle />
         <Divider borderColor="whiteAlpha.200" />
@@ -250,7 +250,7 @@ function TestPulseControls({
           focusThumbOnChange={false}
         >
           <SliderTrack bg="whiteAlpha.200">
-            <SliderFilledTrack bg="teal.300" />
+            <SliderFilledTrack bg="yellow.300" />
           </SliderTrack>
           <SliderThumb boxSize={4} />
         </Slider>
@@ -258,12 +258,12 @@ function TestPulseControls({
           mt={2}
           w="100%"
           onClick={onSendNote}
-          colorScheme="teal"
+          colorScheme="yellow"
           variant="outline"
           size="sm"
-          borderColor="teal.300"
-          color="teal.100"
-          _hover={{ bg: "teal.900", borderColor: "teal.200" }}
+          borderColor="yellow.300"
+          color="yellow.100"
+          _hover={{ bg: "yellow.900", borderColor: "yellow.200" }}
         >
           Send Note {note}
         </Button>
@@ -326,7 +326,7 @@ function TestPulseControls({
           focusThumbOnChange={false}
         >
           <SliderTrack bg="whiteAlpha.200">
-            <SliderFilledTrack bg="purple.300" />
+            <SliderFilledTrack bg="green.300" />
           </SliderTrack>
           <SliderThumb boxSize={4} />
         </Slider>
@@ -334,12 +334,12 @@ function TestPulseControls({
           <Button
             flex="1"
             onClick={onSendBend}
-            colorScheme="purple"
+            colorScheme="green"
             variant="outline"
             size="sm"
-            borderColor="purple.300"
-            color="purple.100"
-            _hover={{ bg: "purple.900", borderColor: "purple.200" }}
+            borderColor="green.300"
+            color="green.100"
+            _hover={{ bg: "green.900", borderColor: "green.200" }}
           >
             Send Bend
           </Button>
@@ -366,12 +366,12 @@ function TestPulseControls({
             isLoading={activeSweep === "pads"}
             isDisabled={activeSweep !== null}
             loadingText="Pads"
-            colorScheme="teal"
+            colorScheme="yellow"
             variant="outline"
             size="sm"
-            borderColor="teal.300"
-            color="teal.100"
-            _hover={{ bg: "teal.900", borderColor: "teal.200" }}
+            borderColor="yellow.300"
+            color="yellow.100"
+            _hover={{ bg: "yellow.900", borderColor: "yellow.200" }}
           >
             Pad Sweep
           </Button>
@@ -406,7 +406,7 @@ function TestPulseControls({
           </Button>
         )}
         <Text color="whiteAlpha.500" fontSize="xs" mt={2}>
-          Walks Push pad notes 36–99 or common Push CCs so MidiCircuit can learn/verify mappings quickly. Stop cancels after the current note/CC is released.
+          Walks Push pad notes 36–99 or common Push CCs so your MIDI app can learn or verify mappings quickly. Stop cancels after the current note/CC is released.
         </Text>
       </Box>
 
@@ -431,7 +431,7 @@ function TestPulseControls({
   );
 }
 
-const MIDICIRCUIT_CHECKLIST = [
+const EXTERNAL_MIDI_CHECKLIST = [
   "Select Ableton Push 2 Live Port or User Port in your MIDI app.",
   "Send Test Note and confirm the app receives note + velocity on the chosen channel.",
   "Send Test CC and confirm controller value changes arrive.",
@@ -439,16 +439,16 @@ const MIDICIRCUIT_CHECKLIST = [
   "Use Panic / Reset MIDI if anything sticks, then Copy Report if routing still looks wrong.",
 ];
 
-function MidiCircuitChecklist() {
+function ExternalMidiChecklist() {
   return (
     <Box textAlign="left" bg="whiteAlpha.50" border="1px solid" borderColor="whiteAlpha.100" borderRadius="lg" p={3}>
       <Text color="whiteAlpha.700" fontSize="xs" fontWeight="bold" letterSpacing="0.12em" mb={2}>
-        MIDICIRCUIT CHECKLIST
+        EXTERNAL MIDI CHECKLIST
       </Text>
       <VStack align="stretch" spacing={2}>
-        {MIDICIRCUIT_CHECKLIST.map((item, index) => (
+        {EXTERNAL_MIDI_CHECKLIST.map((item, index) => (
           <Flex key={item} gap={2} align="flex-start">
-            <Badge colorScheme="teal" variant="subtle" borderRadius="full" minW="18px" textAlign="center">
+            <Badge colorScheme="yellow" variant="subtle" borderRadius="full" minW="18px" textAlign="center">
               {index + 1}
             </Badge>
             <Text color="whiteAlpha.700" fontSize="xs">
@@ -481,7 +481,7 @@ function PadLabelToggle({
       <Switch
         isChecked={enabled}
         onChange={(event) => onChange(event.target.checked)}
-        colorScheme="teal"
+        colorScheme="yellow"
         aria-label="Show pad labels"
       />
     </Flex>
@@ -554,7 +554,7 @@ function VelocityControl({
         focusThumbOnChange={false}
       >
         <SliderTrack bg="whiteAlpha.200">
-          <SliderFilledTrack bg="teal.300" />
+          <SliderFilledTrack bg="yellow.300" />
         </SliderTrack>
         <SliderThumb boxSize={4} />
       </Slider>
@@ -635,7 +635,7 @@ function MidiMapReference() {
       await navigator.clipboard.writeText(MIDI_MAP_TEXT);
       toast({
         title: "MIDI map copied",
-        description: "Paste it into MidiCircuit notes, docs, or an issue.",
+        description: "Paste it into app notes, docs, or an issue.",
         status: "success",
         duration: 2200,
         isClosable: true,

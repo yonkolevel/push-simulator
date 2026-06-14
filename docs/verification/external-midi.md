@@ -1,6 +1,6 @@
-# MidiCircuit manual verification checklist
+# External MIDI app manual verification checklist
 
-Use this checklist before marking the simulator usability goal complete. The app must be tested against the real MidiCircuit UI, not only automated unit/build checks.
+Use this checklist before marking the simulator usability goal complete. The app must be tested against the real external MIDI app UI, not only automated unit/build checks.
 
 ## Setup
 
@@ -35,7 +35,7 @@ Use this checklist before marking the simulator usability goal complete. The app
    go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1
    ```
 
-3. Open MidiCircuit and connect to one simulator port:
+3. Open your external MIDI app and connect to one simulator port:
 
    - `Ableton Push 2 Live Port`
    - `Ableton Push 2 User Port`
@@ -46,25 +46,25 @@ Record evidence for each row. Screenshots, copied MIDI event logs, copied debug 
 
 | Check | Expected result | Pass? | Evidence / notes |
 | --- | --- | --- | --- |
-| Port discovery | MidiCircuit shows `Ableton Push 2 Live Port` and/or `Ableton Push 2 User Port` as connectable MIDI devices. |  |  |
+| Port discovery | The external MIDI app shows `Ableton Push 2 Live Port` and/or `Ableton Push 2 User Port` as connectable MIDI devices. |  |  |
 | External listener | `go run ./tools/check-midi-ports.go -listen ...` captures note, CC, and pitch-bend events from the simulator port. |  |  |
 | External sender | `go run ./tools/check-midi-ports.go -send ...` sends note, CC, and pitch-bend into the simulator and the simulator event history shows received messages. |  |  |
-| Test Note | Simulator **Test Note** arrives in MidiCircuit with the selected note, velocity, and channel. |  |  |
-| Test CC | Simulator **Test CC** arrives in MidiCircuit with the selected controller and channel. |  |  |
-| Test Bend | Simulator **Test Bend** arrives in MidiCircuit as pitch bend, including center value `0`. |  |  |
-| Pad interaction | Clicking pads sends notes `36–99`; visual simulator history and MidiCircuit agree on note/channel/velocity. |  |  |
-| Control interaction | Clicking common controls sends expected CCs; hover inspector, event history, and MidiCircuit agree. |  |  |
+| Test Note | Simulator **Test Note** arrives in the external MIDI app with the selected note, velocity, and channel. |  |  |
+| Test CC | Simulator **Test CC** arrives in the external MIDI app with the selected controller and channel. |  |  |
+| Test Bend | Simulator **Test Bend** arrives in the external MIDI app as pitch bend, including center value `0`. |  |  |
+| Pad interaction | Clicking pads sends notes `36–99`; visual simulator history and the external MIDI app agree on note/channel/velocity. |  |  |
+| Control interaction | Clicking common controls sends expected CCs; hover inspector, event history, and the external MIDI app agree. |  |  |
 | Touch strip | Dragging the touch strip sends pitch bend and resets to center on release. |  |  |
-| Pad Sweep | **Pad Sweep** can drive MidiCircuit mapping across notes `36–99`; **Stop Sweep** cancels safely. |  |  |
-| CC Sweep | **CC Sweep** can drive MidiCircuit mapping for common Push controls; **Stop Sweep** cancels safely. |  |  |
-| Panic / Reset MIDI | Panic releases stuck notes/controls in MidiCircuit and centers pitch bend. |  |  |
+| Pad Sweep | **Pad Sweep** can drive external app mapping across notes `36–99`; **Stop Sweep** cancels safely. |  |  |
+| CC Sweep | **CC Sweep** can drive external app mapping for common Push controls; **Stop Sweep** cancels safely. |  |  |
+| Panic / Reset MIDI | Panic releases stuck notes/controls in the external MIDI app and centers pitch bend. |  |  |
 | Persistence | Restart/reload preserves pad velocity, MIDI channel, pad labels, Test Note, Test CC, and Test Bend. |  |  |
 | Debug evidence | **Copy Report** includes ports, channel, selected control, active state, and recent events useful for troubleshooting. |  |  |
 | Verification report | **Copy Verification Report** copies a checklist report seeded with ports, channel, selected control, active state, and recent events. |  |  |
 
 ## Local smoke evidence
 
-These checks prove the simulator's virtual ports, emitted MIDI messages, and received MIDI messages are visible to another process. They do **not** replace the real MidiCircuit checks above.
+These checks prove the simulator's virtual ports, emitted MIDI messages, and received MIDI messages are visible to another process. They do **not** replace the real external MIDI app checks above.
 
 Last local smoke run: `2026-06-14 01:04:33 JST`
 
@@ -131,17 +131,17 @@ RECEIVED · PITCH BEND · VALUE 1024 · CH 2
 
 ## Verification report template
 
-Use **Copy Verification Report** in the simulator's MIDI Status panel to generate this with the current simulator snapshot and recent events pre-filled. If the simulator is unavailable, copy this block into the issue, PR, or release notes when running the real MidiCircuit pass.
+Use **Copy Verification Report** in the simulator's MIDI Status panel to generate this with the current simulator snapshot and recent events pre-filled. If the simulator is unavailable, copy this block into the issue, PR, or release notes when running the real external MIDI app pass.
 
 ```markdown
-# MidiCircuit verification report
+# External MIDI verification report
 
 Date/time:
 Tester:
 Simulator commit:
 Simulator build/run mode: wails dev / wails build app
-MidiCircuit app/version:
-MidiCircuit platform: macOS / iOS simulator / iOS device
+External MIDI app/version:
+External MIDI platform: macOS / iOS simulator / iOS device
 Connected port: Ableton Push 2 Live Port / Ableton Push 2 User Port
 
 ## Automated smoke checks
@@ -153,7 +153,7 @@ Connected port: Ableton Push 2 Live Port / Ableton Push 2 User Port
 - [ ] External sender: `go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1`
   Evidence:
 
-## Real MidiCircuit checks
+## Real external MIDI app checks
 
 - [ ] Port discovery
   Evidence:
@@ -191,7 +191,7 @@ Accepted out-of-scope items:
 
 ## Completion rule
 
-Only mark the active goal complete when every required check above passes against MidiCircuit, or when any remaining failures are explicitly accepted as out of scope.
+Only mark the active goal complete when every required check above passes against an external MIDI app, or when any remaining failures are explicitly accepted as out of scope.
 
 ## Known non-blocking validation output
 

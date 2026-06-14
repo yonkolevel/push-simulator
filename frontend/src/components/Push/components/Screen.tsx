@@ -39,9 +39,9 @@ const SvgScreen = (props: React.SVGProps<SVGSVGElement>) => {
     <g id="screen" {...props}>
       <defs>
         <linearGradient id="screenGradient" x1="76" x2="332" y1="56" y2="102">
-          <stop stopColor="#10241f" />
-          <stop offset="0.5" stopColor="#172d35" />
-          <stop offset="1" stopColor="#0f171d" />
+          <stop stopColor="#0C2230" />
+          <stop offset="0.5" stopColor="#123045" />
+          <stop offset="1" stopColor="#0A141B" />
         </linearGradient>
         <filter id="screenGlow" x="70" y="50" width="268" height="58">
           <feGaussianBlur stdDeviation="2" result="blur" />
@@ -59,27 +59,27 @@ const SvgScreen = (props: React.SVGProps<SVGSVGElement>) => {
         height="44.6"
         rx="2.5"
         fill="url(#screenGradient)"
-        stroke="#284048"
+        stroke="#33566B"
         strokeWidth="0.8"
         filter="url(#screenGlow)"
       />
-      <text x="86" y="72" fill="#7ee7cf" fontSize="5.2" fontFamily="monospace" letterSpacing="0.5">
+      <text x="86" y="72" fill="#BCEBFF" fontSize="5.2" fontFamily="monospace" letterSpacing="0.5">
         PUSH 2 SIMULATOR
       </text>
-      <text x="86" y="88" fill="#eefbf7" fontSize="8.2" fontFamily="monospace" fontWeight="700">
+      <text x="86" y="88" fill="#F4FCFF" fontSize="8.2" fontFamily="monospace" fontWeight="700">
         {formatMidiEvent(lastMidiEvent)}
       </text>
-      <text x="249" y="73" fill="#c7d2dc" fontSize="5" fontFamily="monospace" textAnchor="end">
+      <text x="249" y="73" fill="#DDE8EC" fontSize="5" fontFamily="monospace" textAnchor="end">
         {formatTapMode(tapMode)}
       </text>
-      <text x="249" y="90" fill="#9fb2c0" fontSize="5.4" fontFamily="monospace" textAnchor="end">
+      <text x="249" y="90" fill="#9FB8C4" fontSize="5.4" fontFamily="monospace" textAnchor="end">
         CH {midiChannel} · NOTES {notesPressed.size} · CTRL {controlsPressed.size}
       </text>
       <rect x="258" y="64" width="62" height="25" rx="1.6" fill="rgba(255,255,255,0.06)" />
-      <text x="289" y="75" fill="#d6f6ec" fontSize="5" fontFamily="monospace" textAnchor="middle">
+      <text x="289" y="75" fill="#F4FCFF" fontSize="5" fontFamily="monospace" textAnchor="middle">
         KEYBOARD
       </text>
-      <text x="289" y="85" fill="#8fa9a1" fontSize="4.2" fontFamily="monospace" textAnchor="middle">
+      <text x="289" y="85" fill="#A3BBC6" fontSize="4.2" fontFamily="monospace" textAnchor="middle">
         Z-M · A-K · Q-I · 1-8
       </text>
     </g>

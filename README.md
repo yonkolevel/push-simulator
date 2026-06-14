@@ -9,12 +9,12 @@ The simulator creates Push-like virtual MIDI ports and renders an interactive Pu
 Use this when you want to:
 
 - test Push 2-style note, CC, and pitch-bend input from a desktop app
-- map controls in tools like MidiCircuit
+- map controls in external MIDI apps
 - debug MIDI routing with visible sent/received event history
 - verify channels, velocity, pad ranges, and common Push CC mappings
 - recover quickly from stuck notes or controls while experimenting
 
-## Quick start with MidiCircuit or another MIDI app
+## Quick start with an external MIDI app
 
 1. Start the simulator:
 
@@ -33,7 +33,7 @@ Use this when you want to:
    - `Ableton Push 2 Live Port`
    - `Ableton Push 2 User Port`
 
-3. Open the simulator **Performance Panel** and follow the **MidiCircuit Checklist**.
+3. Open the simulator **Performance Panel** and follow the **External MIDI Checklist**.
 
 4. Use the probe controls to confirm routing:
 
@@ -52,9 +52,9 @@ Use this when you want to:
 
 6. If routing still looks wrong, use **Copy Report** in MIDI Status. It includes port names, backend status, channel, selected control, active notes/controls, and recent MIDI events.
 
-7. When doing a real MidiCircuit pass, use **Copy Verification Report** in MIDI Status. It copies a checklist report seeded with the current ports, channel, active state, selected control, and recent events so you can paste evidence into an issue, PR, or release note.
+7. When doing a real external-app pass, use **Copy Verification Report** in MIDI Status. It copies a checklist report seeded with the current ports, channel, active state, selected control, and recent events so you can paste evidence into an issue, PR, or release note.
 
-Before considering a release ready, run the manual checklist in [`docs/verification/midicircuit.md`](docs/verification/midicircuit.md) against the real MidiCircuit app.
+Before considering a release ready, run the manual checklist in [`docs/verification/external-midi.md`](docs/verification/external-midi.md) against a real external MIDI app.
 
 ## Useful MIDI map
 
@@ -120,7 +120,7 @@ wails build
 
 ### Runtime MIDI smoke check
 
-With the simulator running, verify that an external process can see the same ports MidiCircuit should see:
+With the simulator running, verify that an external process can see the same ports your MIDI app should see:
 
 ```bash
 go run ./tools/check-midi-ports.go

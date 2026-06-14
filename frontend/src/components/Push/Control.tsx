@@ -117,7 +117,7 @@ const Control: React.FunctionComponent<IControlProps> = ({
         opacity: isTapped ? 0.86 : 1,
         transition: 'opacity 80ms ease, filter 80ms ease, transform 80ms ease',
         filter: isActive
-          ? 'brightness(1.25) drop-shadow(0 0 3px rgba(0, 210, 190, 0.8))'
+          ? 'brightness(1.22) drop-shadow(0 0 3px rgba(255, 212, 38, 0.72))'
           : undefined,
         transform: isTapped ? 'translateY(0.35px)' : undefined,
         ...props.style,

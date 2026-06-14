@@ -125,14 +125,14 @@ export default function MidiStatus() {
 
   const copyVerificationReport = async () => {
     const report = [
-      "# MidiCircuit verification report",
+      "# External MIDI verification report",
       "",
       `Date/time: ${new Date().toLocaleString()}`,
       "Tester:",
       "Simulator commit:",
       "Simulator build/run mode: wails dev / wails build app",
-      "MidiCircuit app/version:",
-      "MidiCircuit platform: macOS / iOS simulator / iOS device",
+      "External MIDI app/version:",
+      "External MIDI platform: macOS / iOS simulator / iOS device",
       `Connected/listening port: ${activeOutputPort}`,
       "",
       "## Automated smoke checks",
@@ -144,7 +144,7 @@ export default function MidiStatus() {
       "- [ ] External sender: `go run ./tools/check-midi-ports.go -send -port \"Ableton Push 2 Live Port\" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1`",
       "  Evidence:",
       "",
-      "## Real MidiCircuit checks",
+      "## Real external MIDI app checks",
       "",
       "- [ ] Port discovery",
       "  Evidence:",
@@ -216,7 +216,7 @@ export default function MidiStatus() {
             Active Notes
           </Text>
           <Badge
-            colorScheme={activeNotes > 0 ? "teal" : "gray"}
+            colorScheme={activeNotes > 0 ? "yellow" : "gray"}
             variant="subtle"
             px={2}
             py={1}
@@ -243,7 +243,7 @@ export default function MidiStatus() {
           <Text color="whiteAlpha.800" fontSize="sm">
             Send Channel
           </Text>
-          <Badge colorScheme="teal" variant="subtle" px={2} py={1} borderRadius="md">
+          <Badge colorScheme="yellow" variant="subtle" px={2} py={1} borderRadius="md">
             {midiChannel}
           </Badge>
         </Flex>
@@ -252,10 +252,10 @@ export default function MidiStatus() {
             Event Direction
           </Text>
           <HStack spacing={1.5}>
-            <Badge colorScheme="teal" variant="subtle" px={2} py={1} borderRadius="md">
+            <Badge colorScheme="yellow" variant="subtle" px={2} py={1} borderRadius="md">
               {sentEvents} sent
             </Badge>
-            <Badge colorScheme="purple" variant="subtle" px={2} py={1} borderRadius="md">
+            <Badge colorScheme="blue" variant="subtle" px={2} py={1} borderRadius="md">
               {receivedEvents} received
             </Badge>
           </HStack>
@@ -272,7 +272,7 @@ export default function MidiStatus() {
               <Text color="whiteAlpha.500" fontSize="xs">
                 Last sent
               </Text>
-              <Text color="teal.100" fontSize="xs" fontFamily="mono" textTransform="uppercase">
+              <Text color="yellow.100" fontSize="xs" fontFamily="mono" textTransform="uppercase">
                 {eventLabel(lastSentEvent)}
               </Text>
             </Box>
@@ -280,7 +280,7 @@ export default function MidiStatus() {
               <Text color="whiteAlpha.500" fontSize="xs">
                 Last received
               </Text>
-              <Text color="purple.100" fontSize="xs" fontFamily="mono" textTransform="uppercase">
+              <Text color="blue.100" fontSize="xs" fontFamily="mono" textTransform="uppercase">
                 {eventLabel(lastReceivedEvent)}
               </Text>
             </Box>
@@ -308,7 +308,7 @@ export default function MidiStatus() {
               <Text color="white" fontSize="sm" fontFamily="mono" textTransform="uppercase">
                 {selectedControl.name}
               </Text>
-              <Text color="teal.100" fontSize="xs" fontFamily="mono" mt={1}>
+              <Text color="yellow.100" fontSize="xs" fontFamily="mono" mt={1}>
                 {selectedControl.type.toUpperCase()} {selectedControl.id}
               </Text>
             </>
@@ -338,7 +338,7 @@ export default function MidiStatus() {
             <Text color="whiteAlpha.600" fontSize="xs">
               Active output
             </Text>
-            <Text color="teal.100" fontSize="xs" fontFamily="mono">
+            <Text color="yellow.100" fontSize="xs" fontFamily="mono">
               {activeOutputPort}
             </Text>
           </Box>
@@ -381,7 +381,7 @@ export default function MidiStatus() {
               midiEvents.slice(0, 12).map((event) => (
                 <Text
                   key={`${event.timestamp}-${event.direction}-${event.type}-${event.id}-${event.velocity}`}
-                  color={event.direction === "sent" ? "teal.100" : "purple.100"}
+                  color={event.direction === "sent" ? "yellow.100" : "blue.100"}
                   fontSize="xs"
                   fontFamily="mono"
                   textTransform="uppercase"
