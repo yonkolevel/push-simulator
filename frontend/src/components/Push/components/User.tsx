@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgUser = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="user">
+  <Control {...props} id="user" name="user" type={ControlType.CC} controlId={ControlId.USER}>
     <path
       id="Vector_374"
       d="M414.13 45.41V33.23h-20.19v12.18h20.19z"
@@ -27,7 +29,7 @@ const SvgUser = (props: React.SVGProps<SVGSVGElement>) => (
       d="M401.67 36.38h.4v.16a.671.671 0 01.2-.16.46.46 0 01.21 0 .65.65 0 01.33.1l-.19.37a.329.329 0 00-.22-.08c-.22 0-.33.16-.33.5v.9h-.4v-1.79z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgUser;

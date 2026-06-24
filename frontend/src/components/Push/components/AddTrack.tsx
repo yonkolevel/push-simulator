@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgAddTrack = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="add-track">
+  <Control {...props} id="add-track" name="addtrack" type={ControlType.CC} controlId={ControlId.ADD_TRACK}>
     <path
       id="Vector_294"
       d="M345.06 99.38h20.19V79.19h-20.19v20.19z"
@@ -47,7 +49,7 @@ const SvgAddTrack = (props: React.SVGProps<SVGSVGElement>) => (
       d="M355.28 86.5v1.85l.57-.57h.54l-.76.74.82 1h-.53l-.57-.74-.07.07v.67h-.4v-3l.4-.02z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgAddTrack;

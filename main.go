@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"push-simulator/push"
 
@@ -26,7 +27,10 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        push.Startup,
+		OnStartup: func(ctx context.Context) {
+			app.startup(ctx)
+			push.Startup(ctx)
+		},
 		Bind: []interface{}{
 			app,
 			push,

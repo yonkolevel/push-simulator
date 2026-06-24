@@ -19,6 +19,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	a.startDisplayFeedListener()
 }
 
 // Greet returns a greeting for the given name

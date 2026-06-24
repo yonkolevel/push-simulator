@@ -1,20 +1,17 @@
 import * as React from "react";
-import { pushColorToHexMap } from "../../../libs/push2/colors";
 import { useAppState } from "../../../libs/push2/context/PushContext";
 import { ControlId, ControlType } from "../../../libs/push2/controls";
-import { useToggleControl } from "../../../libs/push2/react/hooks";
-import { ButtonColor } from "../../../libs/push2/types";
 import Control from "../Control";
 
 const SvgRecord = (props: React.SVGProps<SVGSVGElement>) => {
   const { controlsState } = useAppState();
-  const controlState = controlsState.get(ControlId.DELETE);
-  const color = pushColorToHexMap[controlState?.velocity || 0];
+  const controlState = controlsState.get(ControlId.RECORD);
 
   return (
     <Control
-      id="new"
-      name="new"
+      {...props}
+      id="record"
+      name="record"
       type={ControlType.CC}
       controlId={ControlId.RECORD}
     >
@@ -26,7 +23,7 @@ const SvgRecord = (props: React.SVGProps<SVGSVGElement>) => {
       <path
         id="Vector_155"
         d="M18.21 297.19a4.73 4.73 0 100-9.46 4.73 4.73 0 000 9.46z"
-        stroke={controlState?.velocity ? "red" : "#fff"}
+        stroke={controlState?.velocity ? "#ff4f68" : "#fff"}
         strokeMiterlimit={10}
       />
     </Control>

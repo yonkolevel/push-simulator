@@ -1,18 +1,17 @@
-import * as React from "react";
-import { ControlId, ControlType } from "../../../libs/push2/controls";
-import Control from "../Control";
-
-declare global {
-  interface Window {
-    backend: any;
-    wails: any;
-    runtime: any;
-  }
-}
+import * as React from 'react';
+import { Colors } from '../../../libs/push2/colors';
+import { useAppState } from '../../../libs/push2/context/PushContext';
+import { ControlId, ControlType } from '../../../libs/push2/controls';
+import Control from '../Control';
 
 const SvgPlay = (props: React.SVGProps<SVGSVGElement>) => {
+  const { controlsState } = useAppState();
+  const controllerState = controlsState.get(ControlId.PLAY);
+  const isOn = Boolean(controllerState?.velocity);
+
   return (
     <Control
+      {...props}
       name="play"
       id="play"
       type={ControlType.CC}
@@ -26,7 +25,7 @@ const SvgPlay = (props: React.SVGProps<SVGSVGElement>) => {
       <path
         id="Vector_153"
         d="M23.03 314.64l-8.82 5.42v-10.84l8.82 5.42z"
-        stroke="#fff"
+        stroke={isOn ? Colors.Green : '#fff'}
         strokeMiterlimit={10}
       />
     </Control>

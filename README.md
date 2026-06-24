@@ -1,26 +1,188 @@
-# README
+# Ableton Push 2 Simulator
 
-## About
+A desktop Ableton Push 2 simulator built with [Wails](https://wails.io/) + Go + React/TypeScript.
 
-This is the repository for an implementation of the Ableton Push 2 Simulator.
+The simulator creates Push-like virtual MIDI ports and renders an interactive Push 2 surface so external MIDI tools can be mapped and tested without the physical controller.
 
-It uses [`wails`](https://wails.io/docs/gettingstarted/installation) as the application framework. Wails itself is a tool written mostly in go that helps building applications with go and web technologies.
+## Why use it
 
-The `frontend` folder contains a project in react. At the root you should find the go related packages and the `main.go` entry point.
+Use this when you want to:
 
-## Live Development
+- test Push 2-style note, CC, and pitch-bend input from a desktop app
+- map controls in external MIDI apps
+- debug MIDI routing with visible sent/received event history
+- verify channels, velocity, pad ranges, and common Push CC mappings
+- recover quickly from stuck notes or controls while experimenting
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+## Quick start with an external MIDI app
 
-## Building
+1. Start the simulator:
 
-To build a redistributable, production mode package, use `wails build`.
+   ```bash
+   wails dev
+   ```
 
+   Or build and run the desktop app:
 
-## Push 2 related docs
-[Push Display Interface](https://github.com/yonkolevel/push-simulator)
+   ```bash
+   wails build
+   ```
 
-[Push 2 User Manual](https://www.ableton.com/en/manual/using-push-2/)
+2. In your MIDI app, connect to either simulator port:
+
+   - `Ableton Push 2 Live Port`
+   - `Ableton Push 2 User Port`
+
+3. Open the simulator **Performance Panel** and follow the **External MIDI Checklist**.
+
+4. Use the probe controls to confirm routing:
+
+   - **Test Note** — sends a configurable note with the current pad velocity.
+   - **Test CC** — sends a configurable control-change pulse.
+   - **Test Bend** — sends a pitch-bend value from `-8192` to `8191`.
+   - **Pad Sweep** — walks the 8×8 pad range, notes `36–99`.
+   - **CC Sweep** — walks common Push controls such as soft buttons, transport, nav, and mode buttons.
+
+5. If anything sticks, click **Panic / Reset MIDI**. It sends:
+
+   - note off for notes `0–127`
+   - CC off for controllers `0–127`
+   - all-notes-off CC `123`
+   - centered pitch bend `0`
+
+6. If routing still looks wrong, use **Copy Report** in MIDI Status. It includes port names, backend status, channel, selected control, active notes/controls, and recent MIDI events.
+
+7. When doing a real external-app pass, use **Copy Verification Report** in MIDI Status. It copies a checklist report seeded with the current ports, channel, active state, selected control, and recent events so you can paste evidence into an issue, PR, or release note.
+
+Before considering a release ready, run the manual checklist in [`docs/verification/external-midi.md`](docs/verification/external-midi.md) against a real external MIDI app.
+
+## Push display feed mode
+
+The simulator can mirror live Push display frames from an external producer such as PushOS. On startup it listens on `127.0.0.1:48484` for DisplayKit `PSMF` TCP frames and paints the decoded Push BGR565/XOR payload into the simulated screen.
+
+Start the built simulator app or run it from source:
+
+```bash
+wails dev
+# or
+wails build
+./build/bin/push-simulator-2023.app/Contents/MacOS/push-simulator-2023
+```
+
+Then start PushOS with TCP mirroring enabled:
+
+```bash
+cd ../PushOS
+PUSH_REACT_URL=http://127.0.0.1:5175 PUSHOS_MIRROR_TCP=1 swift run PushReactApp
+```
+
+Expected simulator log:
+
+```text
+display feed: listening on 127.0.0.1:48484
+display feed: connected from 127.0.0.1:<port>
+```
+
+Use `PUSH_SIM_DISPLAY_FEED_PORT=<port>` to change the simulator listener port. Match it on the producer side if the producer supports a custom DisplayKit mirror port. Without a connected producer the simulated screen falls back to the built-in MIDI status display.
+
+## Useful MIDI map
+
+Common Push 2 mappings exposed by the simulator:
+
+| Area | Mapping |
+| --- | --- |
+| Pads | Notes `36–99` |
+| Top soft buttons | CC `102–109` |
+| Bottom soft buttons | CC `20–27` |
+| Play / Record | CC `85` / `86` |
+| Delete / Undo | CC `118` / `119` |
+| Mute / Solo / Stop Clip | CC `60` / `61` / `29` |
+| Device / Mix / Clip / Scale | CC `110` / `112` / `113` / `58` |
+| Repeat / Accent | CC `56` / `57` |
+| Arrows | CC `44–47` |
+| Page / Octave | CC `62–63` / `54–55` |
+| Touch strip | Pitch bend `-8192…8191` |
+
+For exact control IDs while using the app, hover or focus a control and read the **Control inspector** in the Performance Panel. Use **Copy MIDI Map** to copy a plain-text map for notes, docs, or issues.
+
+## Persistent simulator settings
+
+The Performance Panel remembers these settings across reloads/restarts:
+
+- pad velocity
+- MIDI channel
+- pad label visibility
+- Test Note
+- Test CC
+- Test Bend
+
+## Keyboard pad input
+
+The keyboard maps to the lower half of the Push pad grid:
+
+```text
+1 2 3 4 5 6 7 8
+Q W E R T Y U I
+A S D F G H J K
+Z X C V B N M ,
+```
+
+Hold `Shift` to latch multiple pads. Hold `Option` for chord mode.
+
+## Development
+
+The `frontend` folder contains the React app. Go backend packages live at the repository root and under `push/`.
+
+### Live development
+
+```bash
+wails dev
+```
+
+Wails runs a Vite dev server with hot reload. The browser dev server is available at `http://localhost:34115` for calling Go methods from devtools.
+
+### Production build
+
+```bash
+wails build
+```
+
+### Runtime MIDI smoke check
+
+With the simulator running, verify that an external process can see the same ports your MIDI app should see:
+
+```bash
+go run ./tools/check-midi-ports.go
+```
+
+Expected success output ends with:
+
+```text
+OK: Ableton Push 2 Live/User virtual ports are visible as both inputs and outputs.
+```
+
+To capture outgoing simulator events without another app, add `-listen` and then trigger pads/CCs/pitch bend in the simulator:
+
+```bash
+go run ./tools/check-midi-ports.go -listen -port "Ableton Push 2 Live Port" -seconds 15
+```
+
+To verify the simulator receives MIDI from an external process, add `-send` and check the simulator event history for received note, CC, and pitch-bend messages:
+
+```bash
+go run ./tools/check-midi-ports.go -send -port "Ableton Push 2 Live Port" -note 36 -velocity 100 -cc 85 -bend 1024 -channel 1
+```
+
+### Validation
+
+```bash
+go test ./push/...
+cd frontend && npm test
+cd frontend && npm run build
+go run ./tools/check-midi-ports.go # with the simulator running
+```
+
+## Push 2 references
+
+- [Push Display Interface](https://github.com/yonkolevel/push-simulator)
+- [Push 2 User Manual](https://www.ableton.com/en/manual/using-push-2/)

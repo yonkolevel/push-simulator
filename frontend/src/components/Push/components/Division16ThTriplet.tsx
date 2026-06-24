@@ -1,21 +1,17 @@
 import * as React from 'react';
-import { Colors } from '../../../libs/push2/colors';
-import { ControlId } from '../../../libs/push2/controls';
-import { useToggleControl } from '../../../libs/push2/react/hooks';
+import { ControlId, ControlType } from '../../../libs/push2/controls';
+import Control from '../Control';
+
 
 const SvgDvivision16ThTriplet = (props: React.SVGProps<SVGSVGElement>) => {
-  const { isOn, toggleControl } = useToggleControl(ControlId.GRID_DIVISION_3);
-  const [mouseDown, setMouseDown] = React.useState(false);
 
   return (
-    <g
-      id='division-8th'
-      onMouseDown={() => setMouseDown(true)}
-      onMouseUp={() => {
-        setMouseDown(false);
-      }}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
-      onClick={toggleControl}
+    <Control
+      {...props}
+      id='division-16th-triplet'
+      name='division-16th-triplet'
+      type={ControlType.CC}
+      controlId={ControlId.GRID_DIVISION_6}
     >
       <path
         id='Vector_403'
@@ -25,9 +21,9 @@ const SvgDvivision16ThTriplet = (props: React.SVGProps<SVGSVGElement>) => {
       <path
         id='Vector_404'
         d='M358.71 196.53l3 3v-.89L358.3 202a.621.621 0 10.88.88l3.39-3.38a.642.642 0 000-.89l-3-3a.621.621 0 10-.88.88l.02.04z'
-        fill={isOn ? Colors.Green : '#fff'}
+        fill='#fff'
       />
-    </g>
+    </Control>
   );
 };
 

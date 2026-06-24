@@ -1,24 +1,17 @@
 import * as React from 'react';
-import { Colors } from '../../../libs/push2/colors';
-import { ControlId } from '../../../libs/push2/controls';
-import { useToggleControl } from '../../../libs/push2/react/hooks';
+import { ControlId, ControlType } from '../../../libs/push2/controls';
+import Control from '../Control';
+
 
 const SvgOctaveDown = (props: React.SVGProps<SVGSVGElement>) => {
-  const { isOn, toggleControl } = useToggleControl(ControlId.OCTAVE_DOWN);
-  const [mouseDown, setMouseDown] = React.useState(false);
 
   return (
-    <g
+    <Control
+      {...props}
       id='octave-down'
-      onMouseDown={() => {
-        setMouseDown(true);
-        toggleControl();
-      }}
-      onMouseUp={() => {
-        setMouseDown(false);
-        toggleControl();
-      }}
-      style={{ opacity: mouseDown ? 0.8 : 1 }}
+      name='octave-down'
+      type={ControlType.CC}
+      controlId={ControlId.OCTAVE_DOWN}
     >
       <path
         id='Vector_389'
@@ -28,9 +21,9 @@ const SvgOctaveDown = (props: React.SVGProps<SVGSVGElement>) => {
       <path
         id='Vector_390'
         d='M396.11 296l-3.32 3.32h.88l-3.16-3.16a.621.621 0 10-.88.88l3.16 3.17a.652.652 0 00.88 0l3.33-3.33c.57-.57-.32-1.45-.89-.88z'
-        fill={isOn ? Colors.Green : '#fff'}
+        fill='#fff'
       />
-    </g>
+    </Control>
   );
 };
 

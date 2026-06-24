@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgTapTempo = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="tap-tempo">
+  <Control {...props} id="tap-tempo" name="taptempo" type={ControlType.CC} controlId={ControlId.TAP_TEMPO}>
     <path
       id="Vector_156"
       d="M36.13 33.69H7.99v11.64h28.14V33.69z"
@@ -47,7 +49,7 @@ const SvgTapTempo = (props: React.SVGProps<SVGSVGElement>) => (
       d="M26.41 37.25a.88.88 0 01.27-.65.889.889 0 01.66-.26.91.91 0 01.67.26.94.94 0 010 1.32 1 1 0 01-.67.26.868.868 0 01-.66-.27.88.88 0 01-.27-.66zm.41 0a.61.61 0 00.14.42.519.519 0 00.38.15.49.49 0 00.492-.34.552.552 0 00.028-.22.57.57 0 00-.14-.41.49.49 0 00-.38-.15.48.48 0 00-.37.15.57.57 0 00-.15.4z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgTapTempo;

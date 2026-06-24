@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgAccent = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="accent">
+  <Control {...props} id="accent" name="accent" type={ControlType.CC} controlId={ControlId.ACCENT}>
     <path
       id="Vector_333"
       d="M414.12 229.32v-20.19h-20.19v20.19h20.19z"
@@ -37,7 +39,7 @@ const SvgAccent = (props: React.SVGProps<SVGSVGElement>) => (
       d="M406.42 213.07v1.37H406v-1.37h-.17v-.38h.17v-.64h.41v.64h.31v.38h-.3z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgAccent;

@@ -1,15 +1,11 @@
 import * as React from "react";
-import { pushColorToHexMap } from "../../../libs/push2/colors";
-import { useAppState } from "../../../libs/push2/context/PushContext";
 import { ControlId, ControlType } from "../../../libs/push2/controls";
 import Control from "../Control";
 
 const SvgStopClip = (props: React.SVGProps<SVGSVGElement>) => {
-  const { controlsState } = useAppState();
-  const controlState = controlsState.get(ControlId.DELETE);
-
   return (
     <Control
+      {...props}
       id="stop-clip"
       name="stop-clip"
       type={ControlType.CC}

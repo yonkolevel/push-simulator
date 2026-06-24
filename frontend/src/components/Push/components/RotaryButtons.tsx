@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { animated, useSpring } from 'react-spring';
-import { useGesture } from 'react-use-gesture';
+import { useGesture } from '@use-gesture/react';
 import { Colors } from '../../../libs/push2/colors';
 import { ControlId } from '../../../libs/push2/controls';
 import { useToggleControl } from '../../../libs/push2/react/hooks';

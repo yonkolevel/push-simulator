@@ -6,6 +6,14 @@ export function CloseSession() {
   return window['go']['push']['AbletonPush']['CloseSession']();
 }
 
+export function GetChannel() {
+  return window['go']['push']['AbletonPush']['GetChannel']();
+}
+
+export function GetMIDIStatus() {
+  return window['go']['push']['AbletonPush']['GetMIDIStatus']();
+}
+
 export function GetNotePads() {
   return window['go']['push']['AbletonPush']['GetNotePads']();
 }
@@ -44,6 +52,10 @@ export function SendNoteOn(arg1, arg2) {
 
 export function SendPitchBend(arg1) {
   return window['go']['push']['AbletonPush']['SendPitchBend'](arg1);
+}
+
+export function SetChannel(arg1) {
+  return window['go']['push']['AbletonPush']['SetChannel'](arg1);
 }
 
 export function SetLiveMode() {

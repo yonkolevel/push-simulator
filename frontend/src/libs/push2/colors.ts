@@ -16,24 +16,42 @@ export const buttonColors = {
 };
 
 export enum Colors {
-  Teal = "#00D2BE",
-  Yellow = "#FED134",
-  LightYellow = "#FBFFA7",
-  Purple = "#A17EFC",
-  LightPurple = "#B89EFD",
-  Orange = "#EAA384",
-  Gray = "#F3F3F3",
-  Green = "#0ee60e",
-  Blue = "#46A5FC",
-  Red = "red",
-  LightRed = "#F85F85",
-  LightGreen = "#90EE90",
-  BlueGreen = "#0d98ba",
-  LightOrange = "#EFBAA3"
+  Teal = "#00B7C7",
+  Yellow = "#FFD426",
+  LightYellow = "#FFF27A",
+  Purple = "#B65CFF",
+  LightPurple = "#D19BFF",
+  Orange = "#FF8A00",
+  Gray = "#E7E5DC",
+  Green = "#56D33B",
+  Blue = "#00A7FF",
+  Red = "#FF2D2A",
+  LightRed = "#FF6B5F",
+  LightGreen = "#9AF27D",
+  BlueGreen = "#00C8A8",
+  LightOrange = "#FFB24A"
 }
 
+export const PushPalette = {
+  page: "#080807",
+  pageGlow: "#171713",
+  body: "#1D1D1B",
+  bodyEdge: "#0C0C0B",
+  panel: "rgba(17, 17, 15, 0.9)",
+  panelBorder: "rgba(255, 255, 255, 0.14)",
+  control: "#3C3C3B",
+  controlLit: "#E7E5DC",
+  label: "#F2F1EA",
+  labelMuted: "#8B8B84",
+  display: "#10252F",
+  displayText: "#BCEBFF",
+  accent: Colors.Yellow,
+  sent: Colors.Orange,
+  received: Colors.Blue,
+};
+
 export const pushColorToHexMap: { [key: number]: string } = {
-  0: Colors.Gray,
+  0: "#242625",
   9: Colors.Orange,
   15: Colors.LightGreen,
   16: Colors.Teal,
@@ -42,7 +60,7 @@ export const pushColorToHexMap: { [key: number]: string } = {
   126: Colors.Green,
   127: Colors.Red,
   122: Colors.Gray,
-  123: "gray",
+  123: "#3C3C3B",
   7: Colors.LightRed,
   20: Colors.LightPurple,
   8: Colors.LightOrange

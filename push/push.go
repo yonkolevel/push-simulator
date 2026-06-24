@@ -26,6 +26,9 @@ type Push interface {
 	SetLiveMode() error
 	CloseSession() error
 	SetScaleMode(mode ScaleMode)
+	SetChannel(channel uint8) error
+	GetChannel() uint8
+	GetMIDIStatus() MIDIStatus
 	Startup(ctx context.Context)
 	GetNotePads() NotePads
 	Shutdown(ctx context.Context)
@@ -43,6 +46,7 @@ type AbletonPush struct {
 	NotePads       NotePads
 	ScaleMode      ScaleMode
 	Mode           DeviceMode
+	Channel        uint8
 	ActivePads     map[string]Note
 	ctx            context.Context
 }
@@ -68,39 +72,58 @@ func (ap *AbletonPush) Startup(ctx context.Context) {
 	ap.ctx = ctx
 	runtime.LogPrint(ctx, "STARTED")
 	drv, err := driver.New()
-	in, err := drv.OpenVirtualIn(DEVICE_NAME)
 	must(err)
-	out, err := drv.OpenVirtualOut(DEVICE_NAME)
+
+	liveIn, err := drv.OpenVirtualIn(Push2LivePort)
 	must(err)
+	liveOut, err := drv.OpenVirtualOut(Push2LivePort)
+	must(err)
+	userIn, err := drv.OpenVirtualIn(Push2UserPort)
+	must(err)
+	userOut, err := drv.OpenVirtualOut(Push2UserPort)
+	must(err)
+
 	ap.Driver = drv
-	must(in.Open())
-	must(in.Open())
+	ap.LivePortWriter = writer.New(liveOut)
+	ap.UserPortWriter = writer.New(userOut)
+	ap.LivePortIn = liveIn
+	ap.LivePortOut = liveOut
+	ap.UserPortIn = userIn
+	ap.UserPortOut = userOut
+	ap.Mode = Live
+	ap.Channel = 1
 
-	uwr := writer.New(out)
+	runtime.LogInfof(ctx, "MIDI ports ready: %s, %s", Push2LivePort, Push2UserPort)
 
-	ap.LivePortWriter = uwr
-	ap.UserPortWriter = uwr
-	ap.LivePortIn = in
-	ap.LivePortOut = out
-	ap.UserPortIn = in
-	ap.UserPortOut = out
+	liveReader := ap.newMIDIReader(ctx)
+	userReader := ap.newMIDIReader(ctx)
+	ap.Reader = liveReader
 
-	rd := reader.New(
+	must(liveReader.ListenTo(liveIn))
+	must(userReader.ListenTo(userIn))
+}
+
+func (ap *AbletonPush) newMIDIReader(ctx context.Context) *reader.Reader {
+	return reader.New(
 		reader.NoLogger(),
 		reader.Device(func(_ reader.Position, name string) {
 			log.Println(name)
 		}),
 		reader.NoteOn(func(p *reader.Position, channel, key, velocity uint8) {
-			runtime.LogDebugf(ctx, "note_on %d %d", key, velocity)
-			runtime.EventsEmit(ap.ctx, "note_on", key, velocity)
+			runtime.LogDebugf(ctx, "note_on %d %d ch %d", key, velocity, channel+1)
+			runtime.EventsEmit(ap.ctx, "note_on", key, velocity, channel)
 		}),
 		reader.NoteOff(func(p *reader.Position, channel, key, velocity uint8) {
-			runtime.LogDebugf(ctx, "note_off %d", key)
-			runtime.EventsEmit(ap.ctx, "note_off", key, velocity)
+			runtime.LogDebugf(ctx, "note_off %d ch %d", key, channel+1)
+			runtime.EventsEmit(ap.ctx, "note_off", key, velocity, channel)
 		}),
 		reader.ControlChange(func(p *reader.Position, channel, controller, velocity uint8) {
-			runtime.LogDebugf(ctx, "cc %d %d", controller, velocity)
-			runtime.EventsEmit(ap.ctx, "cc", controller, velocity)
+			runtime.LogDebugf(ctx, "cc %d %d ch %d", controller, velocity, channel+1)
+			runtime.EventsEmit(ap.ctx, "cc", controller, velocity, channel)
+		}),
+		reader.Pitchbend(func(p *reader.Position, channel uint8, value int16) {
+			runtime.LogDebugf(ctx, "pitch_bend %d ch %d", value, channel+1)
+			runtime.EventsEmit(ap.ctx, "pitch_bend", value, channel)
 		}),
 		reader.RTStart(func() {
 			log.Println("Start msg")
@@ -114,17 +137,10 @@ func (ap *AbletonPush) Startup(ctx context.Context) {
 			if testEq(data, deviceIdReq) {
 				log.Println("Device id requested")
 
-				msg := pushIdReply
-
 				time.Sleep(time.Millisecond * 500)
-				err = writer.SysEx(ap.LivePortWriter, msg)
-
-				if err != nil {
+				if err := writer.SysEx(ap.LivePortWriter, pushIdReply); err != nil {
 					log.Println(err)
 				}
-
-				log.Println("Sent")
-				log.Println(msg)
 			}
 
 			if testEq(data, deviceStatsReq) {
@@ -133,27 +149,15 @@ func (ap *AbletonPush) Startup(ctx context.Context) {
 
 			if testEq(data, SET_LIVE_MODE_MSG) {
 				log.Println("Set live mode requested")
-
-				err = writer.SysEx(ap.LivePortWriter, SET_LIVE_MODE_MSG)
-
-				if err != nil {
+				if err := writer.SysEx(ap.LivePortWriter, SET_LIVE_MODE_MSG); err != nil {
 					log.Println(err)
 				}
-
-				err = writer.SysEx(ap.UserPortWriter, SET_LIVE_MODE_MSG)
-
-				if err != nil {
+				if err := writer.SysEx(ap.UserPortWriter, SET_LIVE_MODE_MSG); err != nil {
 					log.Println(err)
 				}
 			}
 		}),
 	)
-
-	ap.Reader = rd
-
-	rd.ListenTo(in)
-
-	// return nil
 }
 
 func (push *AbletonPush) Shutdown(ctx context.Context) {
@@ -165,9 +169,12 @@ func (ap *AbletonPush) SetScaleMode(mode ScaleMode) {
 }
 
 func (ap *AbletonPush) SetUserMode() error {
-	err := writer.SysEx(ap.LivePortWriter, SET_USER_MODE_MSG)
-
+	wr, err := ap.liveWriter()
 	if err != nil {
+		return err
+	}
+
+	if err := writer.SysEx(wr, SET_USER_MODE_MSG); err != nil {
 		return err
 	}
 
@@ -177,9 +184,12 @@ func (ap *AbletonPush) SetUserMode() error {
 }
 
 func (ap *AbletonPush) SetLiveMode() error {
-	err := writer.SysEx(ap.LivePortWriter, SET_LIVE_MODE_MSG)
-
+	wr, err := ap.liveWriter()
 	if err != nil {
+		return err
+	}
+
+	if err := writer.SysEx(wr, SET_LIVE_MODE_MSG); err != nil {
 		return err
 	}
 

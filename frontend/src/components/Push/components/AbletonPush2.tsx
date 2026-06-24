@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import * as React from "react";
 import SvgAccent from "./Accent";
@@ -43,6 +43,8 @@ import SvgQuantize from "./Quantize";
 import SvgRecord from "./Record";
 import SvgRepeat from "./Repeat";
 import SvgRotaryButtons from "./RotaryButtons";
+import SvgScale from "./Scale";
+import SvgScreen from "./Screen";
 import SvgSelect from "./Select";
 import SvgSession from "./Session";
 import SvgSetup from "./Setup";
@@ -88,30 +90,32 @@ const SvgAbletonPush2: React.FunctionComponent<
   React.SVGProps<SVGElement> | any
 > = ({ ...props }) => {
   return (
-    <Flex>
-      <Box width={1}>
-        <svg
-          width="100vw"
-          height="100vh"
-          viewBox="0 0 422 339"
-          fill="none"
-          {...props}
-        >
+    <Flex justify="center" align="center" w="100%" h="100%">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 422 339"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+        {...props}
+      >
           <g id="ableton-push2">
+            <defs>
+              <filter id="bodyShadow" x="-5" y="-5" width="432" height="350">
+                <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#000" floodOpacity="0.35" />
+              </filter>
+            </defs>
             <path
-              id="screen"
-              d="M332.32 56.91H76.61v44.6h255.71v-44.6z"
-              fill="#3C3C3B"
+              id="body"
+              d="M421.21.8H0v338.14h421.21V.8z"
+              fill="#1D1D1B"
+              filter="url(#bodyShadow)"
             />
-            <path id="body" d="M421.21.8H0v338.14h421.21V.8z" fill="#1D1D1B" />
+            <SvgScreen />
             <InnnerSvg
             // highlighted={highlighted}
             >
-              <SvgPads
-                onMouseDown={(id: string) => {
-                  alert(id);
-                }}
-              />
+              <SvgPads />
               <BottomSoftButtons />
               <SvgRotaryButtons />
 
@@ -142,6 +146,7 @@ const SvgAbletonPush2: React.FunctionComponent<
               <SvgMaster />
               <SvgRepeat />
               <SvgAccent />
+              <SvgScale />
               <SvgLayout />
               <SvgNote />
               <SvgSession />
@@ -170,7 +175,6 @@ const SvgAbletonPush2: React.FunctionComponent<
             </InnnerSvg>
           </g>
         </svg>
-      </Box>
     </Flex>
   );
 };

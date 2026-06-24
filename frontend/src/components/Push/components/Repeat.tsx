@@ -1,7 +1,9 @@
 import * as React from "react";
+import { ControlId, ControlType } from "../../../libs/push2/controls";
+import Control from "../Control";
 
 const SvgRepeat = (props: React.SVGProps<SVGSVGElement>) => (
-  <g id="repeat">
+  <Control {...props} id="repeat" name="repeat" type={ControlType.CC} controlId={ControlId.REPEAT}>
     <path
       id="Vector_326"
       d="M393.31 229.32v-20.19h-20.19v20.19h20.19z"
@@ -37,7 +39,7 @@ const SvgRepeat = (props: React.SVGProps<SVGSVGElement>) => (
       d="M385.47 212.89v1.37h-.4v-1.37h-.17v-.37h.17v-.64h.4v.64h.32v.37h-.32z"
       fill="#fff"
     />
-  </g>
+  </Control>
 );
 
 export default SvgRepeat;

@@ -103,7 +103,7 @@ export const notePads = createNotePads();
 
 export const padPosition = (pad: number) => {
   const normPad = pad - padStartVal;
-  const row = Math.round(normPad / 8);
+  const row = Math.floor(normPad / 8);
   const col = normPad - 8 * row;
   return {
     col,
