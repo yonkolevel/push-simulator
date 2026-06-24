@@ -56,6 +56,35 @@ Use this when you want to:
 
 Before considering a release ready, run the manual checklist in [`docs/verification/external-midi.md`](docs/verification/external-midi.md) against a real external MIDI app.
 
+## Push display feed mode
+
+The simulator can mirror live Push display frames from an external producer such as PushOS. On startup it listens on `127.0.0.1:48484` for DisplayKit `PSMF` TCP frames and paints the decoded Push BGR565/XOR payload into the simulated screen.
+
+Start the built simulator app or run it from source:
+
+```bash
+wails dev
+# or
+wails build
+./build/bin/push-simulator-2023.app/Contents/MacOS/push-simulator-2023
+```
+
+Then start PushOS with TCP mirroring enabled:
+
+```bash
+cd ../PushOS
+PUSH_REACT_URL=http://127.0.0.1:5175 PUSHOS_MIRROR_TCP=1 swift run PushReactApp
+```
+
+Expected simulator log:
+
+```text
+display feed: listening on 127.0.0.1:48484
+display feed: connected from 127.0.0.1:<port>
+```
+
+Use `PUSH_SIM_DISPLAY_FEED_PORT=<port>` to change the simulator listener port. Match it on the producer side if the producer supports a custom DisplayKit mirror port. Without a connected producer the simulated screen falls back to the built-in MIDI status display.
+
 ## Useful MIDI map
 
 Common Push 2 mappings exposed by the simulator:

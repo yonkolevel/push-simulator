@@ -153,6 +153,25 @@ const SvgScreen = (props: React.SVGProps<SVGSVGElement>) => {
       <text x="289" y="85" fill="#A3BBC6" fontSize="4.2" fontFamily="monospace" textAnchor="middle">
         Z-M · A-K · Q-I · 1-8
       </text>
+      <foreignObject
+        x="76.61"
+        y="56.91"
+        width="255.71"
+        height="44.6"
+        opacity={hasDisplayFeed ? 1 : 0}
+        pointerEvents="none"
+      >
+        <canvas
+          ref={canvasRef}
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            imageRendering: 'pixelated',
+            background: '#05080b',
+          }}
+        />
+      </foreignObject>
     </g>
   );
 };
