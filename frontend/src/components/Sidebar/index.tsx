@@ -28,6 +28,7 @@ import {
   sendPitchBend,
   sendTestCC,
   sendTestNote,
+  setDisplayFeedEnabled,
   setMidiChannel,
   setPadVelocity,
   setShowPadLabels,
@@ -67,7 +68,7 @@ const PITCH_BEND_MAX = 8191;
 
 export default function Sidebar({ onClose }: SidebarProps) {
   const dispatch = useAppDispatch();
-  const { controlsPressed, notesPressed, padVelocity, midiChannel, showPadLabels } = useAppState();
+  const { controlsPressed, notesPressed, padVelocity, midiChannel, showPadLabels, displayFeedEnabled } = useAppState();
   const [testNote, setTestNoteState] = useState(() => readStoredProbeNumber(TEST_NOTE_KEY, 60));
   const [testCC, setTestCCState] = useState(() => readStoredProbeNumber(TEST_CC_KEY, 118));
   const [testBend, setTestBendState] = useState(() =>
@@ -127,6 +128,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
       <Divider borderColor="whiteAlpha.300" mb={5} />
 
       <VStack align="stretch" spacing={6}>
+        <DisplayFeedToggle
+          enabled={displayFeedEnabled}
+          onChange={(enabled) => setDisplayFeedEnabled(dispatch, enabled)}
+        />
+        <Divider borderColor="whiteAlpha.200" />
         <MidiStatus />
         <Divider borderColor="whiteAlpha.200" />
         <ExternalMidiChecklist />
@@ -458,6 +464,33 @@ function ExternalMidiChecklist() {
         ))}
       </VStack>
     </Box>
+  );
+}
+
+function DisplayFeedToggle({
+  enabled,
+  onChange,
+}: {
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+}) {
+  return (
+    <Flex justify="space-between" align="center">
+      <Box textAlign="left">
+        <Text color="whiteAlpha.700" fontSize="xs" fontWeight="bold" letterSpacing="0.12em">
+          DISPLAY FEED
+        </Text>
+        <Text color="whiteAlpha.500" fontSize="xs" mt={1}>
+          Replace the simulator screen with live DisplayKit frames.
+        </Text>
+      </Box>
+      <Switch
+        isChecked={enabled}
+        onChange={(event) => onChange(event.target.checked)}
+        colorScheme="green"
+        aria-label="Enable display feed"
+      />
+    </Flex>
   );
 }
 

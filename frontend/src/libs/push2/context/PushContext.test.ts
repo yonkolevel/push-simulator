@@ -4,6 +4,7 @@ import {
   sendCommonCCSweep,
   sendPadSweep,
   sendPitchBend,
+  setDisplayFeedEnabled,
   setMidiChannel,
 } from './PushContext';
 import {
@@ -70,6 +71,16 @@ describe('Push context MIDI helpers', () => {
         payload: expect.objectContaining({ direction: 'sent', value: 0 }),
       })
     );
+  });
+
+  test('persists display feed toggle changes', () => {
+    setDisplayFeedEnabled(dispatch, false);
+
+    expect((globalThis as any).window.localStorage.setItem).toHaveBeenCalledWith(
+      'push-simulator.displayFeedEnabled',
+      'false'
+    );
+    expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ payload: { enabled: false } }));
   });
 
   test('releases held MIDI state before route changes', async () => {

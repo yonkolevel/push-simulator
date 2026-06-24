@@ -83,11 +83,16 @@ const formatMidiEvent = (
 };
 
 const SvgScreen = (props: React.SVGProps<SVGSVGElement>) => {
-  const { notesPressed, controlsPressed, tapMode, lastMidiEvent, midiChannel } = useAppState();
+  const { notesPressed, controlsPressed, tapMode, lastMidiEvent, midiChannel, displayFeedEnabled } = useAppState();
   const renderCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const [displayFrameHref, setDisplayFrameHref] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    if (!displayFeedEnabled) {
+      setDisplayFrameHref(null);
+      return;
+    }
+
     EventsOn('display_frame', (frame: DisplayFrameEvent) => {
       const canvas = renderCanvasRef.current ?? document.createElement('canvas');
       renderCanvasRef.current = canvas;
@@ -106,7 +111,7 @@ const SvgScreen = (props: React.SVGProps<SVGSVGElement>) => {
     return () => {
       EventsOff('display_frame');
     };
-  }, []);
+  }, [displayFeedEnabled]);
 
   return (
     <g id="screen" {...props}>
