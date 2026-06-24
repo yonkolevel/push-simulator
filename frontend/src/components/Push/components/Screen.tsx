@@ -1,6 +1,56 @@
 import * as React from 'react';
+import { EventsOff, EventsOn } from '../../../../wailsjs/runtime/runtime';
 import { useAppState } from '../../../libs/push2/context/PushContext';
 import { Mode } from '../../../libs/push2/core';
+
+
+type DisplayFrameEvent = {
+  width: number;
+  height: number;
+  rowStride: number;
+  encodedBase64: string;
+};
+
+const PUSH_XOR_PATTERN = [0xE7, 0xF3, 0xE7, 0xFF];
+
+const decodeBase64 = (base64: string) => {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+};
+
+const decodePushFrameToImageData = (frame: DisplayFrameEvent) => {
+  const encoded = decodeBase64(frame.encodedBase64);
+  const imageData = new ImageData(frame.width, frame.height);
+  const rgba = imageData.data;
+
+  for (let y = 0; y < frame.height; y += 1) {
+    const sourceRow = y * frame.rowStride;
+    const destRow = y * frame.width * 4;
+
+    for (let x = 0; x < frame.width; x += 1) {
+      const sourceOffset = sourceRow + x * 2;
+      const byte0 = encoded[sourceOffset] ^ PUSH_XOR_PATTERN[(x * 2) & 3];
+      const byte1 = encoded[sourceOffset + 1] ^ PUSH_XOR_PATTERN[(x * 2 + 1) & 3];
+      const bgr565 = byte0 | (byte1 << 8);
+
+      const r5 = bgr565 & 0x1f;
+      const g6 = (bgr565 >> 5) & 0x3f;
+      const b5 = (bgr565 >> 11) & 0x1f;
+
+      const destOffset = destRow + x * 4;
+      rgba[destOffset] = (r5 << 3) | (r5 >> 2);
+      rgba[destOffset + 1] = (g6 << 2) | (g6 >> 4);
+      rgba[destOffset + 2] = (b5 << 3) | (b5 >> 2);
+      rgba[destOffset + 3] = 255;
+    }
+  }
+
+  return imageData;
+};
 
 const formatTapMode = (mode: Mode) => {
   switch (mode) {
@@ -34,6 +84,27 @@ const formatMidiEvent = (
 
 const SvgScreen = (props: React.SVGProps<SVGSVGElement>) => {
   const { notesPressed, controlsPressed, tapMode, lastMidiEvent, midiChannel } = useAppState();
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const [hasDisplayFeed, setHasDisplayFeed] = React.useState(false);
+
+  React.useEffect(() => {
+    EventsOn('display_frame', (frame: DisplayFrameEvent) => {
+      const canvas = canvasRef.current;
+      const context = canvas?.getContext('2d');
+      if (!canvas || !context) {
+        return;
+      }
+
+      canvas.width = frame.width;
+      canvas.height = frame.height;
+      context.putImageData(decodePushFrameToImageData(frame), 0, 0);
+      setHasDisplayFeed(true);
+    });
+
+    return () => {
+      EventsOff('display_frame');
+    };
+  }, []);
 
   return (
     <g id="screen" {...props}>
