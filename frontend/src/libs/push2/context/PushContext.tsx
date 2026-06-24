@@ -88,6 +88,7 @@ enum ActionType {
   SET_PAD_VELOCITY,
   SET_MIDI_CHANNEL,
   SET_SHOW_PAD_LABELS,
+  SET_DISPLAY_FEED_ENABLED,
   CLEAR_MIDI_EVENTS,
   MIDI_ERROR,
   PITCH_BEND,
@@ -106,6 +107,7 @@ type Action =
   | { type: ActionType.SET_PAD_VELOCITY; payload: { velocity: number } }
   | { type: ActionType.SET_MIDI_CHANNEL; payload: { channel: number } }
   | { type: ActionType.SET_SHOW_PAD_LABELS; payload: { show: boolean } }
+  | { type: ActionType.SET_DISPLAY_FEED_ENABLED; payload: { enabled: boolean } }
   | { type: ActionType.CLEAR_MIDI_EVENTS }
   | { type: ActionType.MIDI_ERROR; payload: MidiErrorSummary }
   | { type: ActionType.PITCH_BEND; payload: { direction: 'sent' | 'received'; value: number; channel?: number } };
@@ -129,6 +131,7 @@ export type AppState = {
   padVelocity: number;
   midiChannel: number;
   showPadLabels: boolean;
+  displayFeedEnabled: boolean;
 };
 
 type Dispatch = (action: Action) => void;
@@ -175,6 +178,7 @@ const STORAGE_KEYS = {
   padVelocity: 'push-simulator.padVelocity',
   midiChannel: 'push-simulator.midiChannel',
   showPadLabels: 'push-simulator.showPadLabels',
+  displayFeedEnabled: 'push-simulator.displayFeedEnabled',
 };
 
 const initialState: AppState = {
@@ -187,6 +191,7 @@ const initialState: AppState = {
   padVelocity: readStoredNumber(STORAGE_KEYS.padVelocity, 100, 1, 127),
   midiChannel: readStoredNumber(STORAGE_KEYS.midiChannel, 1, 1, 16),
   showPadLabels: readStoredBoolean(STORAGE_KEYS.showPadLabels, false),
+  displayFeedEnabled: readStoredBoolean(STORAGE_KEYS.displayFeedEnabled, true),
 };
 
 const MAX_MIDI_EVENTS = 256;
@@ -387,6 +392,13 @@ const reducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         showPadLabels: action.payload.show,
+      };
+    }
+
+    case ActionType.SET_DISPLAY_FEED_ENABLED: {
+      return {
+        ...state,
+        displayFeedEnabled: action.payload.enabled,
       };
     }
 
@@ -799,6 +811,11 @@ export async function setMidiChannel(
 export function setShowPadLabels(dispatch: Dispatch, show: boolean) {
   writeStoredValue(STORAGE_KEYS.showPadLabels, show);
   dispatch({ type: ActionType.SET_SHOW_PAD_LABELS, payload: { show } });
+}
+
+export function setDisplayFeedEnabled(dispatch: Dispatch, enabled: boolean) {
+  writeStoredValue(STORAGE_KEYS.displayFeedEnabled, enabled);
+  dispatch({ type: ActionType.SET_DISPLAY_FEED_ENABLED, payload: { enabled } });
 }
 
 export function clearMidiEvents(dispatch: Dispatch) {
